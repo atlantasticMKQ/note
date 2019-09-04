@@ -1,0 +1,5 @@
+host git-server
+     user git
+     hostname 39.108.168.162
+     port 22
+     identityfile ~/.ssh/mkq

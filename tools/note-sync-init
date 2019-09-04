@@ -1,0 +1,2 @@
+alias push-notes="git push git-server:/home/git/repo/note.git"
+alias pull-notes="git clone git-server:/ho\me/git/repo/note.git"
