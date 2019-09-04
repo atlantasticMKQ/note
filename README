@@ -2,4 +2,4 @@
 push-notes
 pull-notes
 git add <dir>
-git commit -m "commit"
+git commit -m "commit"phone deployed
