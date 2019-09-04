@@ -1,0 +1,162 @@
+% Created 2019-09-03 二 15:34
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{ctex}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\tableofcontents
+
+\section{成绩评定}
+\label{sec:org90e96e1}
+\subsection{期末65-70}
+\label{sec:org60d538c}
+\subsection{实验+报告 20-25}
+\label{sec:org5b3a171}
+\subsection{作业 10 (每周二交作业<不能迟>)}
+\label{sec:org8337d4a}
+\section{上课啦}
+\label{sec:org19f163f}
+\subsection{参考书 清华 严蔚敏}
+\label{sec:org3460792}
+\subsection{教材是科大的那本}
+\label{sec:org23cecda}
+\section{第一章}
+\label{sec:orgd194043}
+据说比较抽象
+\subsection{范畴}
+\label{sec:org79d0090}
+数据结构讨论问题的范畴
+\begin{itemize}
+\item 不能用公式方程等求解的非数值问题
+\item 解决方法
+\begin{itemize}
+\item 分析设计的数据
+\item 确定数据之间的联系
+\item 数据在计算机中的组织方式(组织结构)
+\item 设计解决的算法
+\item 算法的时间性能,空间性能
+\end{itemize}
+\end{itemize}
+
+\subsection{举例}
+\label{sec:orgacce55c}
+\begin{itemize}
+\item 图书检索系统---线性
+\item 对弈---树状
+\item 地图染色---网状
+\end{itemize}
+\subsection{概念和术语}
+\label{sec:orgad55222}
+\subsubsection{Data}
+\label{sec:orgff9b047}
+对于客观事物的符号表示,可以输到计算机里面的那种
+声音图像\ldots{}
+\subsubsection{DataElement}
+\label{sec:org0e0b493}
+数据的基本单位,还可以称为节点,项目之类的
+\subsubsection{DataItem}
+\label{sec:orge8dfb6d}
+数据元素的分量---数据项
+\subsubsection{Set(集合)}
+\label{sec:org5d4760d}
+同类型值的聚合 
+\begin{itemize}
+\item 值不能完全相等
+\item 次序任意
+\item 表示方法
+\begin{itemize}
+\item 罗列
+\item 规则
+\end{itemize}
+\end{itemize}
+\subsubsection{DataObject}
+\label{sec:org8ad974a}
+和问题有关的那种,性质相同的数据元素集合
+\subsubsection{DataStructure}
+\label{sec:orgc2105a5}
+未定义,差不多理解就好了
+\begin{itemize}
+\item 数据的逻辑结构
+\begin{itemize}
+\item DS=(D,S)
+\begin{itemize}
+\item D:一个数据对象
+\item S:数据之间存在的多种联系,是数据元素之间关系元组的集合
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\begin{quote}
+所谓序偶:
+X->Y 这个关系记为 <X,Y> X是Y的直接前驱,Y是X的直接后继
+X--Y 这种对称的关系记作(X,Y)
+\end{quote}
+\begin{itemize}
+\item 数据的储存结构
+\item 数据的运算集合
+\end{itemize}
+
+\begin{enumerate}
+\item 存储技术
+\label{sec:org594962f}
+\begin{itemize}
+\item 顺序存储:数组
+\item 链式存储:链表
+\item 散列存储
+\item 索引存储
+\end{itemize}
+\item 运算集合
+\label{sec:orgea9e38d}
+\begin{itemize}
+\item 接口的定义
+\item 运算集合的实现
+\end{itemize}
+\end{enumerate}
+\subsubsection{DataType}
+\label{sec:org459e943}
+\begin{itemize}
+\item 数据值的特征
+\item 数据机内编码方式
+\item 数据占用空间大小
+\item 对于数据的运算集
+\end{itemize}
+\subsubsection{AbstractDataType}
+\label{sec:org5471520}
+一个数据类型还有定义在上面的一组操作集
+
+(D,S,P)
+
+\begin{itemize}
+\item D 数据对象
+\item S 数据结构
+\item P 对于数据类型的操作
+\end{itemize}
+
+外部使用与内部实现相分离
+\begin{verbatim}
+ADT抽象类型名{
+数据对象:<定义>
+数据关系:<定义>
+基本操作:<定义>
+}ADT类型名
+\end{verbatim}
+\end{document}
