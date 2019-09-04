@@ -1,0 +1,5 @@
+
+push-notes
+pull-notes
+git add <dir>
+git commit -m "commit"
