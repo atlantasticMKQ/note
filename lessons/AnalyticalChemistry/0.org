@@ -1,0 +1,23 @@
+#+TITLE: Analytical Chemistry 00
+#+AUTHOR: MKQ
+#+KEYWORDS: analytical-chemistry note
+* 上课
+** 课程信息 :COURSE_STATUS:
+*** 名称
+分析化学
+*** 考核
+- 期末统考
+- 有期中测验
+- 40学时，实际授课34
+*** 教材
+随便一本貌似就行
+分析化学 卲利民
+*** QQ群
+883726773
+
+
+** 分析化学简介
+- 定性分析
+- 定量分析
+- 结构分析
+

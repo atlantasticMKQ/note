@@ -1,0 +1,246 @@
+% Created 2019-09-04 三 11:07
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Physical Chemistry 02}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Physical Chemistry 02},
+ pdfkeywords={physical-chemistry note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+\section{体系与环境}
+\label{sec:org3bece99}
+\subsection{体系}
+\label{sec:orgf40680f}
+用人为的边界把一部分物质与其他物质分开,这部分被选定的物质叫做系统.
+(System)
+
+\begin{itemize}
+\item 就是热力学的研究对象
+\end{itemize}
+\subsection{环境}
+\label{sec:orgfe789d7}
+就是系统以外的部分,但实际上考虑和系统关系密切的部分
+\subsection{系统的分类}
+\label{sec:orgda57a3f}
+\subsubsection{按照物质能量交换}
+\label{sec:orga069e6e}
+\begin{itemize}
+\item 敞开系统(open system)
+\end{itemize}
+有物质能量交换
+\begin{itemize}
+\item 封闭系统(closed system)
+\end{itemize}
+有物质交换无能量交换
+\begin{itemize}
+\item 孤立系统(isolated System)
+\end{itemize}
+没有物质能量交换
+
+\begin{itemize}
+\item 能量交换只有热和功两种形式在热力学里面
+\end{itemize}
+\subsubsection{按照物质的种类}
+\label{sec:org6f7bdf9}
+\begin{itemize}
+\item 单组分系统
+\end{itemize}
+\begin{itemize}
+\item 多组分系统
+\end{itemize}
+\subsubsection{按照相的数目}
+\label{sec:org8d10309}
+\begin{itemize}
+\item 单相系统(均相系统:例如气体)
+\item 多相系统
+\begin{itemize}
+\item 相:物质物理化学性质相同的部分
++气体:一个相
++液体:可以有很多,按照互溶程度
++固体:一块固体为一个相
+\end{itemize}
+\end{itemize}
+\subsection{1系统宏观性质和状态函数}
+\label{sec:orge00196f}
+\subsubsection{系统性质}
+\label{sec:orgf5e0ee7}
+热力学变量,宏观可以测量,分两类
+\begin{itemize}
+\item 有加和性:广度性质,数学上是一次函数
+\item 没加和性:强度性质,多为广度性质之间的比值什么的
+\item 都不是:电容电阻什么的
+\end{itemize}
+
+\subsubsection{状态函数}
+\label{sec:orgfe6e8df}
+\begin{itemize}
+\item 状态:
+\item 状态参数
+\item 状态函数:系统经过变化,只要回到原来的状态,状态函数不变,
+\end{itemize}
+状态确定,状态函数就唯一确定(不同状态可能温度一样,但相同状态温度不会不一样)
+\begin{itemize}
+\item 状态函数的该变量与变化的途径没有关系
+\item 状态函数的环路积分为零
+\item 状态函数有全微分的性质
+\end{itemize}
+\[p=f(n,V,T)\]
+\begin{itemize}
+\item 二次全微分和求偏导的次序没有关系
+\item MKQ可厉害啦
+\item 还有个公式记在书上了
+\item 老师在讲复合函数的偏微分
+\end{itemize}
+\[
+z=f(x,y)=f[x,y(x,\alpha)]
+\]
+\begin{itemize}
+\item 他说没有比这个更复杂的数学啦:我觉得他骗人
+\end{itemize}
+\begin{itemize}
+\item 状态方程:状态函数间的定量关系式,说明这堆状态函数之间是联系的,
+\end{itemize}
+一个变化了另一个也会变
+\begin{itemize}
+\item 描述一个系统需要多少个变量其实热力学是不会告诉你的,需要你自己实验
+\item 举了个例子;说明这玩意怎么来的
+\end{itemize}
+\[
+f(p,V,T)=0 --> V=f(p,T)
+我把它记在书上了
+\]
+\begin{itemize}
+\item 热力学平衡态
+\end{itemize}
+没有宏观的离子能量流动,此时系统各个相的宏观性质都不发生变化,此时就是热力学
+平hentai了\#喂
+\begin{itemize}
+\item 热平衡:不然会有热传导
+\item 力学平衡:不然会有形变和功
+\item 相平衡:不会有相的产生和消失
+\item 化学平衡:化学反应不行
+\end{itemize}
+\begin{itemize}
+\item 只有平衡态时系统宏观性质才有单值,才有状态函数
+\item 稳定态(和平衡态区别):可能个部分宏观性质不变,但是可能一个相内各部分性质不同
+\end{itemize}
+(不光确定值,还要是确定单值)
+\subsubsection{过程和途径}
+\label{sec:org4549e8e}
+系统从始态到终态的整个变化
+\begin{enumerate}
+\item 过程
+\label{sec:org703b103}
+只与始态终态有关
+\item 途径
+\label{sec:org2e8a303}
+变化中间经历的一系列步骤
+\begin{itemize}
+\item 相同的始态终态可能经历了很多很多种不同的途径
+\item 功和热是和途径有关的
+\end{itemize}
+\end{enumerate}
+\subsubsection{常见的过程}
+\label{sec:org8ad5125}
+等温等压绝热恒容循环
+\begin{itemize}
+\item 爆炸可以近似看作绝热
+\end{itemize}
+
+\begin{enumerate}
+\item 可逆过程
+\label{sec:orga16eb07}
+可以看做经历的每一个微小的变化都在平衡态之间进行,中间状态接近于平衡态,
+也叫作准静态过程,无限缓慢,速度趋于零
+\end{enumerate}
+\section{热力学第零定律和温度}
+\label{sec:org8fa6869}
+\subsection{热力学第零定律}
+\label{sec:org4926804}
+\subsubsection{温度的定义}
+\label{sec:org1f83c90}
+\begin{itemize}
+\item 朴素的温度定义实际上是导热速度的快慢
+\end{itemize}
+\begin{enumerate}
+\item 热平衡现象
+\label{sec:org41a6254}
+热力学利用热平衡状态来定义温度
+不同温度的物体放在一起,过会就温度变得一样了(就不再有热传导了)
+于是要求达到热平衡状态的两个物体具有一个相同状态函数,这个状态函数被定义为温度
+\begin{itemize}
+\item 温度相等是热平衡的充分必要条件
+\item 当两个系统分别与另外一个系统达到了热平衡,那么这两个系统也达到了热平衡
+\end{itemize}
+\end{enumerate}
+\subsubsection{温标}
+\label{sec:org37b3984}
+老师说这个了解一下
+选取一种测温性质,这种测温性质和温度有一种线性的关系(电阻,长度,体积等)
+\begin{enumerate}
+\item 摄氏温标
+\label{sec:org28690bc}
+必须要纯水,其中不能溶解有气体
+\item 开氏温标
+\label{sec:org1d434bd}
+通过理想气体温标来实现
+
+\item 理想气体温标
+\label{sec:orga4b4c3f}
+\end{enumerate}
+
+\section{理想气体}
+\label{sec:orgad9f12c}
+反正老娘都会
+\subsection{理想气体模型}
+\label{sec:orge8adefa}
+\begin{itemize}
+\item 气体分子式没有尺寸的质点
+\item 气体分子之间没有相互作用
+\item 实际气体在温度不太低,压力不太高的时候看作理想气体没有问题
+\end{itemize}
+\subsection{理想气体的状态}
+\label{sec:orga7f2297}
+\subsubsection{压力}
+\label{sec:org4bd4106}
+来自于气体分子对于容器壁无休止的碰撞
+\[
+1 bar = 10^5 Pa
+\]
+\subsubsection{温度}
+\label{sec:orgd2a173f}
+果断还是选择开氏温标呀
+\subsection{单一理想气体状态方程}
+\label{sec:org8403655}
+然后就是一堆实验,测出来一堆定律,总之归纳起来就是
+\[
+pV=nRT
+\]
+$$p \to 0$$时适用
+
+\begin{quote}
+
+\end{quote}
+\end{document}

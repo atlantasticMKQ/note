@@ -1,0 +1,100 @@
+#+TITLE: MKQ Org-mode Study
+#+AUTHOR: MKQ
+#+EMAIL: atlantasticcjq@outlook.com
+#+KEYWORDS: emacs org-mode
+
+* MKQ's org-mode study :note:study:
+** Headlines
+I can add many subtitles here
+with many "*"s...
+
+the text without "*" is main text
+
+** table
+| name | age | 
+| mkq  |  18 | 
+
+"|"  will be treated as a table
+you can creat a table with C-c RET
+
+*** example
+|------+--------+-----+-------------|
+| name | gender | age |       phone |
+|------+--------+-----+-------------|
+| mkq  |      0 |  18 | 17747359820 |
+|------+--------+-----+-------------|
+
+*** others
+you can also creat a table by C-c | 
+
+delate a line by M-S-UP
+insert ..............DOWN
+
+add horizontal dividing line C-c -
+
+
+** font
+*bold*
+/italic/
++delate+
+_underline_
+~mono~
+=mono=
+E=mc^2
+H_2O_2
+
+ :font:
+
+** horizontal dividing line
+-----
+
+** tag
+you can  add tag by :tag: after a title 
+a title will get not only her's title but also her mother's 
+title
+
+** search
+just like vim, you can search tags with C-c \ ,
+and then combine many tags with "+-|&"
+
+- "+" "&" and
+- "-" A-B with A without B
+- "|" or
+
+
+** export
+you can add some meta data via add "TITLE： MKQ-doc" 
+and so on to the start of the file
+
+output via commad of "C-c C-e" 
+
+** meta date
+#+BEGIN_QUOTE
+I would quote someone here.
+#+END_QUOTE
+
+#+BEGIN_CENTER
+center~
+#+END_CENTER
+
+#+BEGIN_SRC
+#include<stdio.h>
+int main()
+{
+    printf("Hello world!");
+}
+#+END_SRC
+
+: examples in one line
+
+#+BEGIN_EXAMPLE
+example in many lines
+MKQ said before
+#+END_EXAMPLE
+
+#+BEGIN_COMMENT
+this words will never be noticed after exported
+#+END_COMMENT
+
+#+BEGIN_HTML
+#+END_HTML

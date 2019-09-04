@@ -1,0 +1,81 @@
+% Created 2019-09-04 三 09:31
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Physical Chemistry 01}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Physical Chemistry 01},
+ pdfkeywords={phsical-chemistry note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{预习}
+\label{sec:org2fbe567}
+\subsection{气体动理论基本公式的推导}
+\label{sec:orgcee8dc1}
+在一个分子总数为N，体积为V的密闭容器中，每个气体分子的质量为m，
+将气体分子分成若干群（根据速度的不同），设各群分子的速度分别为，
+u\(_{\text{1}}\) ,u\(_{\text{2}}\) ,u\(_{\text{3}}\) \ldots{}u\(_{\text{i}}\) \ldots{}单位体积内各群分子的数目分别为n\(_{\text{1}}\) ,n\(_{\text{2}}\) ,
+n\(_{\text{3}}\) \ldots{}n\(_{\text{i}}\) \ldots{}这些数目的和即为单位体积内分子的数目n（n=N/V）
+
+考虑第i群的分子，它的速度是u\(_{\text{i}}\) ,数密度为n\(_{\text{i}}\) ,将它的速度沿x,y,z,
+轴进行分解，得到u\(_{\text{ix}}\),u\(_{\text{iy}}\),u\(_{\text{iz}}\),其中有
+u\(_{\text{i}}^{\text{2}}\) = u\(_{\text{ix}}^{\text{2}}\) +u\(_{\text{iy}}^{\text{2}}\) + u\(_{\text{iz}}^{\text{2}}\) (这个结论之后会有用)。
+
+再考虑一下单位时间内碰到器壁的分子数，假设第i群分子是朝向器壁的，
+这样就可以碰上去了，那么单位时间dt碰到器壁dA上的分子数为
+dA dt u\(_{\text{ix}}\) n\(_{\text{i}}\) (这里假设器壁与x轴垂直)
+那么单位时间内的动量改变量为
+\(\Delta\) p\(_{\text{i}}\) = 2m dA u\(_{\text{ix}}^{\text{2}}\) dt n\(_{\text{i}}\)
+由于只有一半分子是朝向器壁的，所以把2拿掉，然后带入上面那个式子
+P=1/3 m\(\sum\) u\(_{\text{i}}^{\text{2}}\) n\(_{\text{i}}\)
+定义均方根速率，u\(^{\text{2}}\)=\Singma u\(_{\text{i}}^{\text{2}}\) n\(_{\text{i}}\)/n
+于是
+P=1/3 mu\(^{\text{2}}\) n
+\subsection{压力和温度的统计概念}
+\label{sec:orga095b08}
+分子的平均平动能E\(_{\text{t}}\)=1/2 mu\(^{\text{2}}\) (u是均方根速率)
+平均平动能与温度具有平行的关系
+1/2mu\(^{\text{2}}\) =f(T)
+分子的平均平动能是温度的函数
+温度反映了大量分子无规则运动的剧烈程度，讨论几个分子的温度是没有意义的
+
+\subsection{理想气体的状态方程}
+\label{sec:org1a727c5}
+V=f(p,T,N)
+(然后对V作全微分)
+
+pV=nRT
+其中，玻尔兹曼常数k\(_{\text{a}}\)=R/N\(_{\text{A}}\)
+\subsection{分子平均平动能与温度的关系}
+\label{sec:orge964fd6}
+pV=1/3 Nmu\(^{\text{2}}\)
+
+pV=Nk\(_{\text{a}}\) T
+
+E\(_{\text{t}}\)=1/2mu\(^{\text{2}}\)
+
+E\(_{\text{t}}\)=2/3k\(_{\text{a}}\) T
+\subsection{气体运动的速率分布}
+\label{sec:orgbac7895}
+这里需要很长的推导
+\end{document}
