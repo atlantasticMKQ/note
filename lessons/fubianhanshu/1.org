@@ -1,0 +1,48 @@
+#+TITLE: fubianhanshu 01
+#+AUTHOR: MKQ
+#+KEYWORDS: note fubianhanshu
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 复数的几何表示
+全体复数和复平面上的点一一对应,复数z可以由平面上的一个自由向量来表示,同时还可以由向量的
+幅角和长度来表示
+\[
+r=\sqrt{x^2 +y^2 },\tan\psi =\frac{y}{x}
+\]
+- r:复数z的模
+- \psi :是复数z的幅角
+\[
+r=\|z\|,\psi=Arg z
+\]
+** 注意
+- 任意复数都有无穷多的幅角,它们之间相差2n\pi,于是约定,
+用arg z表示一个复数在(-\pi,\pi]内确定的幅角
+\[
+Arg z=arg z + 2n\pi
+\]
+- z=0时,幅角是没有意义的
+* 复数的三角表示
+\[
+x=r \cos\psi,y=r\sin\psi
+\]
+所以
+\[
+z=r(\cos\psi + i \sin\psi)
+\]
+根据欧拉公式
+\[
+e^{i\psi}=\cos \psi + i\sin\psi
+\]
+复数还可以写为指数形式
+\[
+z=e^{i\psi}
+\]
+- 复数相等的充要条件
+\[
+r_1 =r_2 ,\psi_1 =\psi_2 +2n\pi
+\]
+- 复数共轭的关系
+\[
+\| \bar{z} \| = \|z\| ,arg \bar{z}= - arg z,arg z \neq \pi \]                                                                 |
+* 重要的不等式
+- 
