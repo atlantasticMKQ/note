@@ -1,0 +1,163 @@
+% Created 2019-09-05 四 15:20
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Data Structure 01}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Data Structure 01},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{抽象数据类型 ADT}
+\label{sec:org2ca5767}
+Abstract Data Type
+\begin{itemize}
+\item D:数据对象
+\item S:数据之间的关系
+\item T:对于数据的操作
+\end{itemize}
+
+\subsection{基本操作的定义格式}
+\label{sec:orga62b5ae}
+\begin{verbatim}
+操作名()
+{
+    初始条件<>
+    操作结果<>
+}
+\end{verbatim}
+
+\subsection{举例,复数}
+\label{sec:org7c7eb62}
+\begin{verbatim}
+ADT COMPLEX
+{
+    数据对象:D={e1,e2|R}
+    数据关系:R1={<e1,e2>}
+    基本操作:
+	InitComplex(&z,v1,v2)
+	//创建一个复数
+	GetReal(z,&realPart)
+	//获取一个复数的实部
+	GetImage(z.&imagPart)
+	//获取一个复数的虚部
+}ADT Complex
+\end{verbatim}
+\subsection{抽象数据类型涉及的问题}
+\label{sec:org7676452}
+\begin{itemize}
+\item 运算集合的定义
+\item 抽象数据类型在机内的存储
+\item 运算集合u如何被编程实现
+\item 这玩意是给人看的(使用者,实现者)
+\end{itemize}
+
+\rule{\linewidth}{0.5pt}
+于是这一章就完结啦,撒花\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}\textasciitilde{}
+
+\section{类C语言介绍}
+\label{sec:org8bfdefa}
+只是一种概念上的语言,编译不能通过的\ldots{}
+但是这个语法类似C,为了突出运算规则的描述
+\begin{itemize}
+\item 提升了可读性
+\item 考试的时候可以写C也可以写类C
+\item 有点害怕\ldots{}万一学不会就凉了
+\item 一些约定
+\end{itemize}
+\begin{verbatim}
+#define TRUE 1
+#define FALSE 0
+#define OK 1
+#define ERROR 0
+#defin
+e INFEASTBLE -1 //不可实现
+
+#define OVERFLOW -2
+typedef int status;
+\end{verbatim}
+\begin{itemize}
+\item 同时还约定,数据元素的类型名是ElemType
+\item 任何变量允许不定义直接使用
+\item 操作算法描述
+\end{itemize}
+\begin{verbatim}
+Return_value func_name(args)
+{
+    //introductions
+    statements;
+}
+\end{verbatim}
+\begin{itemize}
+\item 结束语句
+\begin{itemize}
+\item 函数结束:   return;return();
+\item case结束:  break;
+\item 错误退出:   exit(错误代码);
+\end{itemize}
+\item 基本函数
+\begin{itemize}
+\item max()
+\item min()
+\item abs()
+\item floor()//向下取整
+\item ceil()//向上取整
+\item eof()//文件是否结束
+\item eoln()//行是否结束
+\end{itemize}
+\item 内存分配
+\begin{itemize}
+\item 指针变量=new 数据类型;
+\item malloc
+\item realloc(旧的基地址,新分配的长度)
+\end{itemize}
+\end{itemize}
+其实就是重新申请了一块空间然后复制过去
+\begin{itemize}
+\item delate
+\item free()
+\end{itemize}
+\begin{quote}
+int a[5];
+这样的数组是不能扩容的,因为a是一个指针常量不能重新赋值,
+它的空间在编译时便已经被分配好了的,但是malloc的空间是在运行时分配的
+\end{quote}
+
+\begin{itemize}
+\item cpp中的引用变量
+\end{itemize}
+\begin{verbatim}
+int x=10;
+int &rx=x,&rrx=rx;
+//引用变量在定义时必须赋值,可以看做变量的别名
+//但把它搞到函数里面的话,函数可以改变变量的值
+//引用变量被初始化后就不能更改它的值了
+//函数参数表定义时可以在引用参数前加&,这样编译器就知道这是个引用变量
+void add(int x,int &y)
+{
+    x=x+1;
+    y=y+1;
+}
+//然后发现y的值变化了,但是x的值没变
+\end{verbatim}
+\end{document}
