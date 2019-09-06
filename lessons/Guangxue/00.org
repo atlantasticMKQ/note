@@ -1,0 +1,16 @@
+#+TITLE: Guangxue 00
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 课程信息
+** 成绩
+- 作业:20%
+- 期中:40%
+- 期末:40%只考后半部分,如果期中期末都是90分以上,那么作业直接给20分
+** 光的波动模型
+*** 定态光波和数学描述
+*** 平面波球面波
+*** 波的复振动表达式
+*** 光程和相位
+*** 傍轴条件和远场条件
