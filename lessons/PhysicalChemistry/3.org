@@ -1,0 +1,132 @@
+#+TITLE: Physical Chemistry 03
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 气体分子动理论 <现在基本不太用了>
+只能算平动,现在转动什么的都可以算
+气体分子在*经典力学*下的*统计平均描述*
+** 气体压强的统计解释
+- 选一个面元
+- 气体分子质量:m
+- 选择一群速度为v_i ,数量为n_i 的分子
+- 计算它们撞到器壁上的动量改变
+\[
+\Delta I= \sum 2mn_i v_{ix}^2 \Delta S =nm\bar{v_{x}^2}\Delta S
+\]
+- 然后计算力
+- 计算所有分子<其中一半是反方向的所以再除以二>
+\[
+\bar{v_x^2}=\bar{v_y^2}=\bar{v_z^2}=\frac{1}{3} v^2
+\]
+\[
+E_k =\frac{1}{2} m v^2
+\]
+\[
+p=\frac{2}{3} n \bar{E_k}
+\]
+** 气体温度的统计解释
+\[
+pV=\frac{N}{N_A}RT=NkT
+\]
+\[
+E_k=\frac{3}{2} kT
+\]
+温度T是运动分子平均动能的量度
+*** 均方根速率(root mean square rate)
+\[
+v_rms =\sqrt{\frac{3kT}{m}}=\sqrt{\frac{3RT}{M}}
+\]
+和温度直接关联
+* Maxwell分布和应用
+** 统计规律性和概率分布
+- 平衡态理想气体热运动速率在(v~v+dv)内的概率
+- 
+\[
+P(v~v+dv)=\frac{dN}{N}=f(v)dv
+\]
+- 概率密度函数
+\[
+f(v)=\frac{P(v~v+dv)}{dv}=\frac{dN}{Ndv}
+\]
+出现在v附近单位速率空间内的概率,就是理想气体的概率分布函数
+- 满足归一化条件
+定义域积分为1
+\[
+
+\]
+*** 可以解决的问题
+- 速率在v附近dv的间隔内的分子数
+\[
+dN=Nf(v)
+\]
+- 一个与速率有关的函数F(v)的平均值
+\[
+\bar{F(v)}=\frac{1}{N}\sum F(v)dN =\sum F(v)f(v)dv
+\]
+*** 人物
+- Maxwell
+- Boltzman <S=kln\Omega>
+** Maxwell分布律
+任意速度分量独立而且相同
+\[
+f(矢量(v))=f(v_x ,v_y ,v_z )=f(v^2 )= f(v_x )f(v_y )f(v_z )
+\]
+然后两边对v_x 求导
+\[
+\frac{df(v_x )}{f(v_x )}=-\beta dv_x^2
+\]
+\[
+f(v_x )=C_1 e^{-\beta v_x^2 }
+\]
+就得到
+\[
+f(矢量(v))=f(v_x ,v_y ,v_z )=Ce^{-\beta(v_x^2 + v_y^2 + v_z^2 )}
+\]
+由椭圆积分带入归一化条件解\beta
+\[
+C=(\frac{\beta}{\pi})^{\frac{3}{2}}
+\]
+还有
+
+\[E_k=\frac{3}{2}kT\]
+\[
+E_k=\frac{1}{2} m \iiint
+ (v_x^2 ,v_y^2 ,v_z^2)f(v_x ,v_y ,v_z)dv_x dv_y dv_z
+\]
+** Maxwell速率分布公式
+\[
+f((v))=(\frac{m}{2\pi kT})^{\frac{3}{2}} e^{-\frac{1}{2}mv^2/kT}
+\]
+*** 坐标变换把它变成球坐标
+\[
+d(v)=dv_x dv_y dv_z =v^2 \sin\rho dv d\rho d\phi
+\]
+\[
+f((v))d(v)=f(v,\rho ,\phi )v^2 sin\rho dv d\rho d\phi =4\pi (\frac{m}{2\pi kT})^{\frac{3}{2}} e^{-\frac{1}{2}mv^2 /kT}v^2d(v)
+\]
+** 最概然速率
+就是上面Maxwell分布的极值点
+\[
+\frac{df((v))}{dv}=0
+\]
+\[
+v_p =\sqrt{\frac{2kT}{m}} =\sqrt{\frac{2RT}{M}}
+\]
+** 这里还有一个速率来着
+** 应用
+*** 计算单位时间内碰撞容器壁气体分子数
+\[
+\Gmma =\frac{1}{4}
+\]
+*** 隙流(effusion)
+- 容器挖一个小孔<不大于平均自由程>
+- 由于孔很小,容器里面还是平衡态,这样流出的分子符合速率分布
+单位时间流出的分子数
+\[
+dN=\Gmma dA =\frac{1}{4} n\sqrt{\frac{8kT}{\pi m}}dA
+\]
+* Boltzmann分子数密度分布律
+** 平衡态理想气体分子空间分布
+就是在外场下的分布,比如说重力场,还要加上一个和位置有关的参数
+** 重力场下
