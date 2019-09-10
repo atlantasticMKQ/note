@@ -1,0 +1,147 @@
+% Created 2019-09-10 二 15:16
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Data Structure 02}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Data Structure 02},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{算法效率分析}
+\label{sec:org13214d3}
+\begin{itemize}
+\item 时间耗费
+\end{itemize}
+
+\subsection{语句的频度}
+\label{sec:org3e05eab}
+算法中某条语句执行的次数
+\[
+T=\sum frequency of code i
+\]
+取每条语句执行一次的时间为单位一
+\begin{itemize}
+\item 很多情况下,T是数据规模n的函数T(n)
+\end{itemize}
+\subsection{时间复杂度}
+\label{sec:org01e76f9}
+假设f(n)是一个函数,且有
+\[
+lim \frac{f(n)}{T(n)}=C
+\]
+记为:
+\[
+T(n)=O(f(n))
+\]
+例如一个三重循环的时间复杂度是
+\[
+O(n^3)
+\]
+这样就只关注数量级了,而且只关注其中执行次数最多的那条语句
+前面的系数也不用管
+\subsubsection{注意}
+\label{sec:org7605e1a}
+一些和数据初始状态相关的不确定性问题
+\begin{itemize}
+\item 按照平均情况估计
+\item 按照最坏的情况估计
+\end{itemize}
+\subsubsection{常用复杂度}
+\label{sec:org27760d2}
+\begin{itemize}
+\item O(1)
+\item O(log n)
+\item O(n)
+\item O(n log n)
+\item O(n\(^{\text{c}}\) )
+\item O(c\(^{\text{n}}\) )
+\item O(n!)
+\end{itemize}
+\subsection{空间复杂度}
+\label{sec:org659a85e}
+\begin{itemize}
+\item 数据元素
+\item 程序占用
+\item 辅助变量
+\end{itemize}
+前两者不评估
+第三个所需要的大小
+\[
+S(n)=O(f(n))
+\]
+\section{typedef}
+\label{sec:org3e9d509}
+\begin{itemize}
+\item typedef int yourtype
+\end{itemize}
+\section{作业}
+\label{sec:org1461d82}
+P60 1 2
+\section{线性表}
+\label{sec:orgd14a2e9}
+\begin{itemize}
+\item 定义
+\item 表示
+\item 实现
+\item 操作
+\item 应用
+\end{itemize}
+\subsection{逻辑结构}
+\label{sec:org558a33e}
+\begin{verbatim}
+Linear_list=(D,S)
+D={a_1 ,a_2 ,a_3 ... a_n }
+S={s}
+s={<a_1 ,a_2 >,<a_2 ,a_3 >...}
+\end{verbatim}
+\begin{itemize}
+\item 是n个节点的有限序列
+\item 可以为空,叫做空线性表
+\item 有一个头结点,有一个尾节点
+\item 直接前驱,直接后继
+\item 强调元素之间的相互关系
+\end{itemize}
+\begin{verbatim}
+ADT List{
+ Element:D={a_1 ...}
+ Relation:R={<>,<>,<>...}
+ Method:
+     InitList(&L)
+     DestoryList(&L)
+     ...
+}ADT List
+\end{verbatim}
+\begin{itemize}
+\item ADT中包含的运算要足够基本
+\item 所以里面没有排序一类的
+\end{itemize}
+\subsection{举例}
+\label{sec:org6654986}
+\subsubsection{就地运算}
+\label{sec:orgafc8814}
+计算结果放在原来的线性表里面
+\subsubsection{异地运算}
+\label{sec:org54fb024}
+就是放在不同的表里面
+\end{document}
