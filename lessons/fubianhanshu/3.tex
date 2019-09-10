@@ -1,0 +1,102 @@
+% Created 2019-09-10 二 09:37
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\tableofcontents
+
+\section{导数和XX函数}
+\label{sec:org06524ea}
+\begin{itemize}
+\item w=f(z)在z的邻域U里有定义,z+\(\Delta\) z \(\in\) U
+\end{itemize}
+如果极限
+\[
+lim_{\Delta z -> 0} \frac{f(z+\Delta z)-f(z)}{\Delta z}
+\]
+存在.
+就是可导.
+\subsection{连续}
+\label{sec:org4d00cce}
+\subsection{可微}
+\label{sec:org5264930}
+如果f(z)在区域D中每点都可微,那f(z)在D上解析
+如果在z\(_{\text{0}}\) 的某个邻域U上可微,那么f(z)在这一点是解析的(必须要有一个邻域,而不是单点)
+如果在z\(_{\text{0}}\) 不是解析的,那么z\(_{\text{0}}\) 是奇点
+在区域上点点可微就是区域解析
+\subsection{复解析函数求导法则}
+\label{sec:org5232370}
+和实变量函数完全相同
+\section{柯西-黎曼方程(C-R function)}
+\label{sec:orgfd84492}
+\subsection{定义}
+\label{sec:org8bea2bc}
+f(z)=u(x,y)+iv(x,y)在z=x+iy可微,等价于
+\begin{itemize}
+\item u,v在(x,y)二元可微
+\item u,v满足C-R方程
+\end{itemize}
+\[
+\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}
+\]
+\[
+\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}
+\]
+
+\subsection{性质}
+\label{sec:org6d0de16}
+如果满足了C-R方程,那么u,v都是调和函数
+\[
+\frac{\partial^2 u}{\partial^2 x}+\frac{\partial^2 v}{\partial^2 y}
+\]
+\[
+\frac{\partial}{\partial z}=\frac{1}{2}\(\frac{\partial }{\partial x} - i\frac{\partial}{\partial y}\)
+\]
+\section{初等函数}
+\label{sec:orge308c5b}
+\subsection{指数函数}
+\label{sec:orgb6a9ce2}
+\[
+e^z
+\]
+就是复的指数函数
+它的微分还是它自己
+\subsubsection{指数函数的性质}
+\label{sec:org9eb87f5}
+\begin{itemize}
+\item 它的模长是e\(^{\text{x}}\) 所以说在任何地方都不会为零
+\item z趋于无穷时,极限不存在
+\item 相乘就是指数相加
+\item e\(^{\text{z}}\) 的周期是2\(\pi\) i
+\end{itemize}
+\subsection{三角,双曲函数}
+\label{sec:org6a64f6f}
+\(\cos\) z , \(\tan\) z , \(\cot\) z \ldots{}
+\subsubsection{性质}
+\label{sec:org4c4ebd1}
+\begin{itemize}
+\item cos sin cosh sinh在C上都是解析的tan cot tanh coth在分母不为零时解析,求导性质之类的和实数下相同
+\end{itemize}
+\end{document}
