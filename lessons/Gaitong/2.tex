@@ -1,0 +1,56 @@
+% Created 2019-09-11 三 16:36
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Gaitong 02}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Gaitong 02},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{条件概率}
+\label{sec:org6d7f063}
+已知事件B发生,在这个条件下讨论A发生的概率,样本空间被限制在一定范围内了
+\subsection{注}
+\label{sec:org4fb7e56}
+下次概率统计课请务必早来然后坐得靠前一些
+\subsection{乘法定理}
+\label{sec:orgee187d3}
+\[
+P(AB)=P(A|B)P(B)=P(B|A)P(A)
+\]
+\[
+P(A_1 A_2 A_3 ... A_n )=P(A_1 )P(A_2 |A_1 )P(A_3 | A_2 )...P(A_{n-1}|A_n )
+\]
+\subsection{事件的独立性}
+\label{sec:org29c5567}
+如果事件的交发生的概率等于两事件发生概率的乘积,那么这两个事件相互独立
+\[
+P(A|B)=P(A)
+\]
+那么事件AB相互独立
+此外还有多个事件的独立,类似于乘法原理的定义
+\subsubsection{注意}
+\label{sec:org582d6c3}
+如果事件两两独立,那么难说是否他们相互独立
+\end{document}
