@@ -1,0 +1,56 @@
+#+TITLE: Physical Chemistry 04
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* Boltzmann 分布和 M-B 分布
+考虑外场影响下的分子空间位置分布
+达到平衡态的理想气体分子空间位置的分布情况
+** 气体分子在重力场下的分布
+在某一个高度z的附近取一个dz,然后这上下的分子有一个压力差
+上面是p下面是p+dp
+\[
+n(z)mg\Delta S dz
+\]
+这一部分分子受到的重力如上
+\[
+dp=-n(z)mgdz
+\]
+受力平衡的条件,
+\[
+dp=kTdn
+\]
+理想气体状态方程
+于是两边积分,就得到了
+\[
+n(z)=n_0 e^{-\frac{mgz}{RT}}
+\]
+** Boltzmann分布律
+\[
+E_p =mgz
+\]
+然后推广到所有的保守立场
+\[
+n(z)=n_0 e^{-\frac{E_p}{RT}}
+\]
+*** 气体分子的分布函数
+\[
+N=\iiint_V n(r) dV 
+\]
+*** 概率密度函数
+\[
+f(x,y,z)dxdydz=\frac{dN}{N}=\frac{n_0}{N}e^{-\frac{E_p (x,y,z)}{kT}}
+\]
+** Maxwell-Boltzmann分布
+*** Maxwell
+\[
+f(v)=\frac{xxx}{xxx} e^{-\frac{E_k}{kT}}
+\]
+*** 合成
+- 相空间,有六维,(x,y,z,v_x ,v_y ,v_z )
+- 代表点:单个分子某一时刻运动的点
+- 速度分布和位置分布相互独立
+*** 注意
+- 总能量是势能和平动动能
+- 对于多原子分子,还要考虑转动动能,振动,相互作用能
+

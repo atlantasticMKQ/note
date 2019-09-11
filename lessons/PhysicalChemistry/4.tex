@@ -1,0 +1,94 @@
+% Created 2019-09-11 三 10:14
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Physical Chemistry 04}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Physical Chemistry 04},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Boltzmann 分布和 M-B 分布}
+\label{sec:org18c2bc0}
+考虑外场影响下的分子空间位置分布
+达到平衡态的理想气体分子空间位置的分布情况
+\subsection{气体分子在重力场下的分布}
+\label{sec:org33468be}
+在某一个高度z的附近取一个dz,然后这上下的分子有一个压力差
+上面是p下面是p+dp
+\[
+n(z)mg\Delta S dz
+\]
+这一部分分子受到的重力如上
+\[
+dp=-n(z)mgdz
+\]
+受力平衡的条件,
+\[
+dp=kTdn
+\]
+理想气体状态方程
+于是两边积分,就得到了
+\[
+n(z)=n_0 e^{-\frac{mgz}{RT}}
+\]
+\subsection{Boltzmann分布律}
+\label{sec:orgfdac880}
+\[
+E_p =mgz
+\]
+然后推广到所有的保守立场
+\[
+n(z)=n_0 e^{-\frac{E_p}{RT}}
+\]
+\subsubsection{气体分子的分布函数}
+\label{sec:org2e00f86}
+\[
+N=\iiint_V n(r) dV 
+\]
+\subsubsection{概率密度函数}
+\label{sec:orgb797a56}
+\[
+f(x,y,z)dxdydz=\frac{dN}{N}=\frac{n_0}{N}e^{-\frac{E_p (x,y,z)}{kT}}
+\]
+\subsection{Maxwell-Boltzmann分布}
+\label{sec:org49a1510}
+\subsubsection{Maxwell}
+\label{sec:orgacc2218}
+\[
+f(v)=\frac{xxx}{xxx} e^{-\frac{E_k}{kT}}
+\]
+\subsubsection{合成}
+\label{sec:org091f917}
+\begin{itemize}
+\item 相空间,有六维,(x,y,z,v\(_{\text{x}}\) ,v\(_{\text{y}}\) ,v\(_{\text{z}}\) )
+\item 代表点:单个分子某一时刻运动的点
+\item 速度分布和位置分布相互独立
+\end{itemize}
+\subsubsection{注意}
+\label{sec:orga21e0b5}
+\begin{itemize}
+\item 总能量是势能和平动动能
+\item 对于多原子分子,还要考虑转动动能,振动,相互作用能
+\end{itemize}
+\end{document}
