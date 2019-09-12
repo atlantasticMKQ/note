@@ -1,0 +1,83 @@
+#+TITLE: FUBIAN 04
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 上节课
+将三角函数,e^x之类的推广到了复平面,还有sinh,cosh
+** 基本性质
+*** sin z cosz sinhz cosh的周期
+- sinz cosz:2\pi
+- sinhz coshz:2\pi i
+*** 这些函数在复平面的零点
+- sinz:n\pi (实数轴上的) 
+\[
+e^{iz}=e^{-iz} \rightarrow e^{iz}=+/- 1
+\]
+\[
+e^{-y}=1(模长) e^{ix}=+/-1
+\]
+- cosz:(n+1/2\pi)
+- sinhz:n\pi i
+- coshz:(n+1/2\pi)i
+*** 所有三角双曲恒等式在复平面上都成立
+*** 这些函数在复平面上是无界的
+**** 例题
+cosz的实部虚部还有模长
+\[
+z=x+iy,cosz=\frac{e^{i(x+iy)}+e^{-i(x+iy)}}{2}
+\]
+然后依次展开
+\[
+cosx\frac{e^y +e^{-y}}{2}+sinx\frac{e^y +e^{-y}}{2}i
+\]
+** 对数函数
+\[
+e^w =z \neq 0 \rightarrow w=Ln z
+\]
+\[
+e^w =z=|z|e^{iArgz}
+\]
+\[
+Ln z=ln|z|+iArgz
+\]
+\[
+ln z=ln|z|+iargz
+\]
+*** 栗子
+\[
+ln(-1)=n\pi
+\]
+\[
+ln(i+i)=ln\sqrt{2}+\frac{\pi}{4}
+\]
+*** 运算法则
+\[
+Ln(z_1 z_2 )=Ln(z_1 )+Ln(z_2 )
+\]
+如果是ln由于幅角可能对不上,所以这里是Ln
+*** 是不是解析的呢?
+复平面上去掉实轴的负半轴和0(幅角不跳动)
+lnz在剩下的区域中解析
+** 幂函数
+\[
+w=z^\alpha =e^\alpha Lnz=e^{\alpha (ln|z|+iArgz)}
+\]
+补充定义
+当\alpha 为大于零的实数时
+\[
+0^\alpha = 0
+\]
+*** 是不是单值函数?
+**** \alpha为正整数时
+\[
+inArgz=in(argz+2k\pi) \LongRightarrow 单值
+\]
+**** \aplha为1/n时
+也就是n次方根
+是个n值函数
+\[
+w=|z|^{\frac{1}{n}}e^{\frac{argz+2k\pi}{n}i}
+\]
+每过n个值,函数值就轮回去一遍
+*** 函数在除去非正半轴解析

@@ -1,0 +1,74 @@
+% Created 2019-09-12 四 10:07
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{FUBIAN 04}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={FUBIAN 04},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{上节课}
+\label{sec:org3ad11b9}
+将三角函数,e\(^{\text{x之类的推广到了复平面,还有sinh,cosh}}\)
+\subsection{基本性质}
+\label{sec:orgf602610}
+\subsubsection{sin z cosz sinhz cosh的周期}
+\label{sec:org3a10ce9}
+\begin{itemize}
+\item sinz cosz:2\(\pi\)
+\item sinhz coshz:2\(\pi\) i
+\end{itemize}
+\subsubsection{这些函数在复平面的零点}
+\label{sec:org4626087}
+\begin{itemize}
+\item sinz:n\(\pi\) (实数轴上的)
+\end{itemize}
+\[
+e^{iz}=e^{-iz} \rightarrow e^{iz}=+/- 1
+\]
+\[
+e^{-y}=1(模长) e^{ix}=+/-1
+\]
+\begin{itemize}
+\item cosz:(n+1/2\(\pi\))
+\item sinhz:n\(\pi\) i
+\item coshz:(n+1/2\(\pi\))i
+\end{itemize}
+\subsubsection{所有三角双曲恒等式在复平面上都成立}
+\label{sec:orga969a35}
+\subsubsection{这些函数在复平面上是无界的}
+\label{sec:org3a9c0d6}
+\begin{enumerate}
+\item 例题
+\label{sec:org7e18bb4}
+cosz的实部虚部还有模长
+\[
+z=x+iy,cosz=\frac{e^{i(x+iy)}+e^{-i(x+iy)}}{2}
+\]
+然后依次展开
+\[
+cosx\frac{e^y +e^{-y}}{2}+sinx\frac{e^y +e^{-y}}{2}i
+\]
+\end{enumerate}
+\end{document}
