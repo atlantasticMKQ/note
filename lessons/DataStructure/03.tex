@@ -1,0 +1,74 @@
+% Created 2019-09-12 四 14:47
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{DataStructure 03}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={DataStructure 03},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{课前}
+\label{sec:org7682b89}
+\begin{itemize}
+\item 定义
+\item 表示
+\item 实现
+\item 应用
+\end{itemize}
+\subsection{线性表的抽象数据类型定义}
+\label{sec:org23266e8}
+\section{顺序表示和实现}
+\label{sec:org64dacc0}
+\subsection{顺序表}
+\label{sec:org3cf7e3d}
+顺序结构存储的线性表
+\begin{verbatim}
+#define LIST_INIT_SIZE 100
+#define LIST_INC_SIZE 10
+typedef struct
+{
+    ElemType    *elem;     //首地址
+    int         length;    //数组长度
+    int         listsize;  //总长
+    int         incsize;   //增量
+}
+//初始化
+status initList(SqList &L);
+//返回首次出现的位序,时间复杂度O(N)
+int locateElem(SqList L,ElemType e);
+//获取某个下标的函数
+status getElem(SqList L,int i,ElemType &e);
+//对于顺序表,获取一个元素非常容易
+
+//销毁顺序表
+status DestroyList(SqList &q);
+
+//插入元素
+status listInsert(SqList &L,int i,ElemType e);
+//删除元素,同时返回该元素的值
+status elemDelete(SqList &L,int i,ElemType &e);
+//对每个元素调用visit函数
+status listTravserse(SqList L,void (* visit)(ElemType e));
+\end{verbatim}
+\end{document}

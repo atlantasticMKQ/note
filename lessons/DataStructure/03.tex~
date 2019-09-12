@@ -1,0 +1,57 @@
+% Created 2019-09-12 四 14:21
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{DataStructure 03}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={DataStructure 03},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{课前}
+\label{sec:orge797da7}
+\begin{itemize}
+\item 定义
+\item 表示
+\item 实现
+\item 应用
+\end{itemize}
+\subsection{线性表的抽象数据类型定义}
+\label{sec:org4037331}
+\section{顺序表示和实现}
+\label{sec:org7e2562e}
+\subsection{顺序表}
+\label{sec:org87825a8}
+顺序结构存储的线性表
+\begin{verbatim}
+\#define LIST_INIT_SIZE 100
+\#define LIST_INC_SIZE 10
+typedef struct
+{
+    ElemType    *elem;     //首地址
+    int         length;    //数组长度
+    int         listsize;  //总长
+    int         incsize;   //增量
+}
+\end{verbatim}
+\end{document}
