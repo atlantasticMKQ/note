@@ -81,3 +81,14 @@ w=|z|^{\frac{1}{n}}e^{\frac{argz+2k\pi}{n}i}
 \]
 每过n个值,函数值就轮回去一遍
 *** 函数在除去非正半轴解析
+** 反三角函数
+\[
+\omega=Arcsinz \omega=Arccosz
+\]
+必然都是多值函数
+*** 栗子
+\[
+w=Arcsinz=-iLn(iz+\sqrt{1-z^2 })
+\]
+是一个无穷值的函数
+
