@@ -1,0 +1,112 @@
+% Created 2019-09-16 一 08:31
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Physical Chemistry 05}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Physical Chemistry 05},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{热力学能}
+\label{sec:orgbc1b279}
+\subsection{系统的总能量}
+\label{sec:org1bcde99}
+\[
+E=E_T +E_V +U
+\]
+\begin{itemize}
+\item E:体系总能量
+\item E\(_{\text{T}}\) :系统整体的平动能
+\item E\(_{\text{V}}\) :系统在外场中的位能
+\end{itemize}
+\subsection{热力学能}
+\label{sec:org06c7096}
+是系统状态的函数
+包括系统内分子的平动能,转动能,振动能(和分子内部的化学键相关)
+\[
+3N-3-2/3(减去三个平动自由度,线性分子两个转动自由度,其他三个,剩下都是震动的自由度)
+\]
+还有电子运动能量,核能,分子间相互作用势能
+\subsection{热力学第一定律}
+\label{sec:orgeb9e0cb}
+\[
+\Delta U=Q+W
+\]
+\[
+dU=\delta Q+\delta W
+\]
+适用于封闭的系统
+热力学能是状态函数,在定态下有定值
+热力学能的绝对值无法确定,但是可以关注变化量
+\[
+U=U(T,V)
+\]
+有着全微分的性质
+\begin{itemize}
+\item 将无法测量的U转化为可以测量的Q和W
+\end{itemize}
+\subsubsection{注意}
+\label{sec:orgf2c5f30}
+\begin{itemize}
+\item 隔离系统的热力学能是一个常数U
+\item 等容过程W=0
+\item 绝热过程W=\(\Delta\) U
+\item W和Q不是状态函数,会随着状态变化的途径变化而变化
+\item 功和热是改变内能唯二的方式
+\end{itemize}
+\subsubsection{功和热}
+\label{sec:orgeb7b267}
+\begin{itemize}
+\item 功:大量质点以有序的方式传递的能量
+\item 热:以无序运动的方式传递的能量
+\end{itemize}
+\subsection{功与可逆途径}
+\label{sec:orgf6ac790}
+\subsubsection{膨胀功}
+\label{sec:orgbe9873c}
+由于体积变化而做的功
+\begin{itemize}
+\item 这里举的是刚性圆筒活塞往活塞上扔沙子的操作
+\item 这里做功的是外压
+\end{itemize}
+\[
+\delta W_e =-p_eAdz=-p_edV
+\]
+\begin{enumerate}
+\item 自由膨胀
+\label{sec:orge1cac0a}
+外压为零,不对外做功
+\item 等外压膨胀
+\label{sec:orgc7f3c52}
+这个也不可逆
+\item 多次等外压膨胀
+\label{sec:org6e5beb6}
+\item 可逆过程
+\label{sec:org7a09ac8}
+内压始终等于外压,而且二做的功最大
+\begin{itemize}
+\item 也叫作准静态过程
+\end{itemize}
+\end{enumerate}
+\end{document}
