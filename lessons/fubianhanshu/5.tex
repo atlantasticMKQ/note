@@ -1,0 +1,71 @@
+% Created 2019-09-17 二 08:41
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{fubianhanshu 05}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={fubianhanshu 05},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{复变函数的积分}
+\label{sec:orga569356}
+\subsection{定义}
+\label{sec:org1eebab2}
+\[
+\int_c f(z)dz=\int_c (u+iv)(dx+idy)
+\]
+更类似于曲线积分(II)
+\subsection{定理}
+\label{sec:org3541f69}
+\[
+f(z)=u(x,y)+iv(x,y)
+\]
+在C上连续,则积分
+\[
+\int_C f(z)dz
+\]
+存在
+\subsection{解法}
+\label{sec:orgefb06e9}
+参数化,求解
+拆成好几段,把每一段都参数化
+\[
+I=\int_C \frac{dz}{(z-a)^n}
+\]
+C:a为中心,R为半径的圆
+\begin{cases}
+I=0 (n\(\neq\) 1) \\
+I=2\(\pi\) i(n=1)
+\end\{cases
+\}
+\subsection{长大不等式}
+\label{sec:org51570bd}
+\[
+\int_C f(z)dz <= \int_C [f(z)][dz] <= Ml
+\]
+\begin{itemize}
+\item M:f(z)在C上最大值
+\item l:C弧长
+\end{itemize}
+\end{document}
