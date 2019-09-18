@@ -1,0 +1,60 @@
+#+TITLE: Physical Chemistry 06
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 热力学第一定律在理想气体的应用
+\[
+dU=(\frac{\partial U}{\partial T})_V  dT + (\frac{\partial U}{\partial V})_T dV
+\]
+** Joule实验
+通过观察气体自由膨胀时温度的变化来观察内能变化
+发现并没有温度的变化(由于气体由高压膨胀到真空,速度很快,可以看作是绝热的过程)
+- 证明了U不随着体积的变化而变化
+\[
+(\frac{\partial U}{\partial V})_T =0
+\]
+** 焓
+\[
+H=U+pV
+\]
+pV不随V变化而变化,所以H也单纯是T的函数
+- 除此之外C_p C_V 也单纯是T的函数
+** C_p C_V
+对于理想气体
+\[
+C_p > C_V
+\]
+\[
+c_p - C_V = (\frac{\partial H}{\partial T})_p - (\frac{\parial U}{\parital T})_p =
+[p+(\frac{\partial U}{\partial V})_T](\frac{\partial V}{\partial V}_p)
+\]
+\[
+C_p - C_V=nR
+\]
+** 理想气体的绝热过程
+不以热的形式交换能量
+*** 绝热可逆过程方程
+\[
+dU=C_V dT
+\]
+- 热容比
+\[
+\gmma =\frac{C_p}{C_V}
+\]
+\[
+\frac{dT}{T}+(\gmma -1)\frac{dV}{V}
+\]
+于是得到
+\[
+pV^{\gmma}=K
+\]
+*** 绝热变化的功
+\[
+\delta W =dU=C_V dT
+\]
+** 可逆绝热线与等温线
+他们只会相交于同一点,如果交于两点就可以做出永动机了
+绝热可逆是等熵的
+** 两种变化中功的比较
+* 理想气体的卡诺循环
