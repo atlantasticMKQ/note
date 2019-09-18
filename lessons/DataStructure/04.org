@@ -1,0 +1,9 @@
+#+TITLE: Data Structure 04
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 单链表
+老师在推荐带头结点的单链表
+不能根据位序来计算出它的地址,只能从头开始一个一个地数
+还需要附加的空间来描述元素之间的关系,
