@@ -1,4 +1,4 @@
-% Created 2019-09-17 二 08:41
+% Created 2019-09-19 四 09:47
 % Intended LaTeX compiler: xelatex
 \documentclass[11pt]{article}
 \usepackage{graphicx}
@@ -29,15 +29,15 @@
 \tableofcontents
 
 \section{复变函数的积分}
-\label{sec:orga569356}
+\label{sec:orga6a37b8}
 \subsection{定义}
-\label{sec:org1eebab2}
+\label{sec:org5734285}
 \[
 \int_c f(z)dz=\int_c (u+iv)(dx+idy)
 \]
 更类似于曲线积分(II)
 \subsection{定理}
-\label{sec:org3541f69}
+\label{sec:orgdce8e61}
 \[
 f(z)=u(x,y)+iv(x,y)
 \]
@@ -47,7 +47,7 @@ f(z)=u(x,y)+iv(x,y)
 \]
 存在
 \subsection{解法}
-\label{sec:orgefb06e9}
+\label{sec:org7c2f9dc}
 参数化,求解
 拆成好几段,把每一段都参数化
 \[
@@ -55,17 +55,33 @@ I=\int_C \frac{dz}{(z-a)^n}
 \]
 C:a为中心,R为半径的圆
 \begin{cases}
-I=0 (n\(\neq\) 1) \\
-I=2\(\pi\) i(n=1)
-\end\{cases
-\}
+I=0 (n\neq 1) \\
+I=2\pi i(n=1)
+\end{cases}
 \subsection{长大不等式}
-\label{sec:org51570bd}
+\label{sec:org8e745d2}
 \[
-\int_C f(z)dz <= \int_C [f(z)][dz] <= Ml
+[\int_C f(z)dz] <= \int_C [f(z)][dz] <= Ml
 \]
 \begin{itemize}
 \item M:f(z)在C上最大值
 \item l:C弧长
 \end{itemize}
+\subsection{柯西积分定理}
+\label{sec:org0112f8d}
+D由闭合回路C围成的单连通区域f(z)在\bar{D}=D+C
+上解析,那么,
+\[
+\int_C f(z)dz=0
+\]
+\subsubsection{推论}
+\label{sec:org3218e6e}
+设f(z)在单联通区域D上解析,此时D内任一曲线
+\[
+\int_C f(z)dz=0
+\]
+\subsubsection{推论}
+\label{sec:org2f15e5c}
+设f(z)在单联通区域D解析,C是任一简单曲线在D内,
+那么积分结果不依赖于C,仅仅取决于起点终点
 \end{document}

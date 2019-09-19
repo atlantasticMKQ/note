@@ -1,0 +1,63 @@
+% Created 2019-09-19 四 10:27
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{fubianhanshu 06}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={fubianhanshu 06},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{柯西积分公式}
+\label{sec:org56422fa}
+\subsection{定理}
+\label{sec:orgdd5b210}
+设函数f(z)在闭路C及其围成的区域是解析的,
+那么对于任意的z in D 都有
+\[
+f(z)=\frac{1}{2\pi i}\int_C \frac{f(\psi)}{\psi -z}dz
+\]
+
+\subsection{证明}
+\label{sec:org9760876}
+\(\forall\) z in D 有z的邻域|\(\psi\) -z|<\tho
+要求邻域全部在D上,那么
+\[
+\int_C \frac{f(\psi)}{\psi -z}d\psi = \int_T \frac{f(\psi)}{\psi -z}d\psi
+\]
+T是那个充分小邻域的边界
+已知
+\[
+\int_C \frac{f(z)}{\psi -z}d\psi =2\pi i f(z)
+\]
+再根据长大不等式,这个和上面那个差一个无穷小量
+\section{解析函数的导数}
+\label{sec:orgd14d672}
+\subsection{定理}
+\label{sec:org6e6a3bc}
+条件同上一个定理
+那么f(z)任意阶可导,还可微
+\[
+f^{(n)}(z)=\frac{n!}{2\pi i}\int_C \frac{f(\psi)}{(\psi -z)^{n+1}}d\psi
+\]
+\end{document}

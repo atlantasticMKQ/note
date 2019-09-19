@@ -1,4 +1,4 @@
-% Created 2019-09-17 二 08:41
+% Created 2019-09-19 四 09:46
 % Intended LaTeX compiler: xelatex
 \documentclass[11pt]{article}
 \usepackage{graphicx}
@@ -29,15 +29,15 @@
 \tableofcontents
 
 \section{复变函数的积分}
-\label{sec:org418962c}
+\label{sec:org6ac840c}
 \subsection{定义}
-\label{sec:orgda08985}
+\label{sec:org94c24f6}
 \[
 \int_c f(z)dz=\int_c (u+iv)(dx+idy)
 \]
 更类似于曲线积分(II)
 \subsection{定理}
-\label{sec:org4f35318}
+\label{sec:orgef686f5}
 \[
 f(z)=u(x,y)+iv(x,y)
 \]
@@ -47,7 +47,7 @@ f(z)=u(x,y)+iv(x,y)
 \]
 存在
 \subsection{解法}
-\label{sec:orgf0119d2}
+\label{sec:org278b92f}
 参数化,求解
 拆成好几段,把每一段都参数化
 \[
@@ -60,12 +60,29 @@ I=2\(\pi\) i(n=1)
 \end\{cases
 \}
 \subsection{长大不等式}
-\label{sec:orgb56c4f4}
+\label{sec:org3f454e7}
 \[
 [\int_C f(z)dz] <= \int_C [f(z)][dz] <= Ml
 \]
 \begin{itemize}
-\item M:|f(z)|在C上最大值
+\item M:f(z)在C上最大值
 \item l:C弧长
 \end{itemize}
+\subsection{柯西积分定理}
+\label{sec:org7d6c895}
+D由闭合回路C围成的单连通区域f(z)在\bar{D}=D+C
+上解析,那么,
+\[
+\int_C f(z)dz=0
+\]
+\subsubsection{推论}
+\label{sec:org0821366}
+设f(z)在单联通区域D上解析,此时D内任一曲线
+\[
+\int_C f(z)dz=0
+\]
+\subsubsection{推论}
+\label{sec:orgf36639c}
+设f(z)在单联通区域D解析,C是任一简单曲线在D内,
+那么积分结果不依赖于C,仅仅取决于起点终点
 \end{document}

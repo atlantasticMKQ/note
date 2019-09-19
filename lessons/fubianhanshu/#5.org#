@@ -1,0 +1,52 @@
+#+TITLE: fubianhanshu 05
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 复变函数的积分
+** 定义
+\[
+\int_c f(z)dz=\int_c (u+iv)(dx+idy)
+\]
+更类似于曲线积分(II)
+** 定理
+\[
+f(z)=u(x,y)+iv(x,y)
+\]
+在C上连续,则积分
+\[
+\int_C f(z)dz
+\]
+存在
+** 解法
+参数化,求解
+拆成好几段,把每一段都参数化
+\[
+I=\int_C \frac{dz}{(z-a)^n}
+\]
+C:a为中心,R为半径的圆
+\begin{cases}
+I=0 (n\neq 1) \\
+I=2\pi i(n=1)
+\end{cases}
+** 长大不等式
+
+\[
+[\int_C f(z)dz] <= \int_C [f(z)][dz] <= Ml
+\]
+- M:f(z)在C上最大值
+- l:C弧长
+** 柯西积分定理
+D由闭合回路C围成的单连通区域f(z)在\bar{D}=D+C
+上解析,那么,
+\[
+\int_C f(z)dz=0
+\]
+*** 推论
+设f(z)在单联通区域D上解析,此时D内任一曲线
+\[
+\int_C f(z)dz=0
+\]
+*** 推论
+设f(z)在单联通区域D解析,C是任一简单曲线在D内,
+那么积分结果不依赖于C,仅仅取决于起点终点

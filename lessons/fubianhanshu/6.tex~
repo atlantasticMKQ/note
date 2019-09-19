@@ -1,0 +1,40 @@
+% Created 2019-09-19 四 09:53
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{fubianhanshu 06}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={fubianhanshu 06},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{柯西积分公式}
+\label{sec:org1d7466c}
+\subsection{定理}
+\label{sec:org459cedb}
+设函数f(z)在闭路C及其围成的区域是解析的,
+那么对于任意的z in D 都有
+\[
+f(z)=\frac{1}{2\pi i}\int_C \frac{f(\psi)}{\psi -z}dz
+\]
+\end{document}
