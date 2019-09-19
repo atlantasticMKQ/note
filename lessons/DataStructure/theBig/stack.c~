@@ -1,0 +1,53 @@
+#include<stdio.h>
+//size of char array of options and elems
+#define OP_SIZE 16
+#define ELEM_SIZE 16
+//Error code
+#define OVERFLOAT -1
+#define ERROR -2
+#define OK 0
+//Elem type
+#define ELEM 1
+#define OP 2
+#define HEAD 0
+struct stack
+{
+	char *elem;//there will be options or elems
+	int elemType;
+	struct stack *next;
+};
+struct stack *initStack()
+{
+	struct stack *stackHead=(struct stack *)malloc(sizeof(struct stack));
+	if(stackHead==NULL)
+		{
+			return NULL;
+		}
+	stackHead->elem=(char *)malloc(ELEM_SIZE*sizeof(char));
+	if(stackHead->elem==NULL)
+		{
+			return NULL;
+		}
+	sprintf(stackHead->elem,"HEAD");
+	stackHead->elemType=HEAD;
+	stackHead->next=NULL;
+	return stackHead;
+}
+int pushStack(struct stack *stackHead,int elemType,char *buffer)
+{
+	//to the top of stack
+	struct stack *top;
+	for(top=stackHead;top->next!=NULL;top=top->next);
+	
+	top->next=(struct stack *)malloc(sizeof(struct stack));
+	if(top->next==NULL)
+		{
+			return OVERFLOAT;
+		}
+	top=top->next;
+	top->elemType=elemType;
+	top->elem=buffer;
+	top->next=NULL;
+	return OK;
+}
+	
