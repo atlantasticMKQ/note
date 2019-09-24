@@ -1,0 +1,30 @@
+* var.c
+** include
+*** 
+** define
+*** NAMESIZE 32 
+是变量,函数这两者名字的长度
+** struct var
+*** int exp
+指数
+*** int constant
+常数
+*** int rand
+如果为1,常数项被视为任意常数
+*** struct var *next
+** struct varList
+*** char *name
+作为临时变量时可以为NULL,
+临时变量会被free掉在一行语句结束时;
+*** struct var *thisVar
+*** struct varList *next
+** struct var *creatVarNode(int exp,int constant,int rand)
+** struct varList *creatVarListNode(char *name)
+** struct varList *initVarList()
+** struct var *varTop(struct var *head)
+** struct varList *varListTop(struct varList *head)
+** int isNum(char c)
+** int strToInt(char *str)
+** struct varList *strToVar(struct varList *head,char *str)
+** int printfVar(struct var *thisVar)
+** int forAllVar(struct varList *head,int (* func)(struct var *thisVar))

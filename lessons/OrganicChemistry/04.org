@@ -1,0 +1,12 @@
+#+TITLE: Organic Chemistry 04
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* a/e键
+如果环己烷上有两个叔丁基在对位,由于不能同时达到e键,所以会把环改成扭船式
+* 脂环稠合
+顺式是不能构像反转的
+但反式可以
+- 金刚烷:无色易升华晶体,熔点较高(晶格对称性也会影响熔点)
+受到排斥的羧基电离度下降,因为受到排斥没法溶剂化

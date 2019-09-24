@@ -1,0 +1,33 @@
+#+TITLE: fubianhanshu 07
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 解析函数与调和函数
+- 定义:实二次函数u(x,y)在D内二阶连续可导(C^2 )而且在D内满足拉普拉斯方程
+\[
+\frac{\partial^2 u }{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=0
+\]
+** 定理
+设f(z)=u(x,y)+iv(x,y)在D内解析,那么它的实部虚部都是D内调和函数
+** 定理
+假设f(z)是解析函数,且f'(z)\neq 0
+那么等值曲线族
+\[
+u(x,y)=K_1
+\]
+
+
+和
+\[
+v(x,y)=K_2
+\]
+在公共点上永远正交
+** 定理
+给一个实部,能找到对应的虚部
+
+设u(x,y)是单联通区域D内的调和函数,那么
+\[
+v(x,y)=\int_{(x_0,y_0)}^{x,y} -\frac{\partial u}{\partial y}dx+ \frac{\partial u}{\partial x}dy+C
+\]
+使得f(z)在D解析,(x,y)是任意一点,(x_0 ,y_0 )是一个定点
