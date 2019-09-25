@@ -1,0 +1,15 @@
+#+TITLE: Physical Chemistry 07
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 化学反应进度
+就是,进行的化学反应的摩尔数
+** 量纲
+mol
+* 化学反应的热效应
+- 反应后系统的温度回到原来的状态,
+- 反应物和生成物都单独存在
+说明没有混合熵,反应前只有反应物,反应后只有生成物,vant hoff平衡箱
+** 恒容热效应
+Q_V 和Q_p 之间的关系,就差一个体积功
