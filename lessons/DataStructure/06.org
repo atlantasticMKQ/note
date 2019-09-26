@@ -1,0 +1,22 @@
+#+TITLE: Data Structure 06
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+
+* 栈的应用
+** 中缀式
+利用两个栈,符号栈和数字栈
+* 双向栈
+开一个数组,一个从上向下一个从下到上
+#+BEGIN_SRC
+#+END_SRC
+* 栈与队列
+** 多函数的嵌套调用
+ 
+* 队列(Queue)
+- 只能在表尾插入,在表头插入
+是先进先出的
+** 链队列
+有头结点,头指针,尾指针
+2
