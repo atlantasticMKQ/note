@@ -1,0 +1,10 @@
+#+TITLE: 
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 复变函数的复习
+** 共轭运算的公式
+\[
+\overline{z_1 \pm z_2}=\overline{z_1}+\overline{z_2}
+\]

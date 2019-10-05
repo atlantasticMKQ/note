@@ -1,0 +1,20 @@
+#+TITLE: Organic Chemistry 06
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 烯烃
+键长更短,键能更大,但是更加活泼
+是sp^2 杂化的,烯烃分子
+** 命名
+- 选择含有双键的最长碳链,然后再编号之类的
+** 炔烯并存
+- 还是以烯为主体,顺反按照Z,E
+** 化学性质
+- 催化加氢:镍,钯,从双键同侧加成
+- 多取代的,反式的,更稳定
+- 加成:自由基,环加成,离子型
+** 亲电加成
+*** 环正离子加成
+生成环鎓离子是决速步
+

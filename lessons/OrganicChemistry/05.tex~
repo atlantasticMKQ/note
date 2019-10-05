@@ -1,0 +1,75 @@
+% Created 2019-09-27 五 08:19
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Organic Chemistry 05}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Organic Chemistry 05},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{立体化学}
+\label{sec:org1037f23}
+\subsection{异构体分类}
+\label{sec:org597abd3}
+\begin{cases}
+\mbox{构造异构}
+
+	\begin{cases}
+	\mbox{碳架异构}	\\
+	\mbox{官能团位置异构}	\\
+	\mbox{官能团异构}	\\
+	\mbox{互变异构}
+    \end{cases}	\\
+\mbox{立体异构}
+	\begin{cases}
+	\mbox{构型异构}
+		\begin{cases}
+		\mbox{顺反异构}	\\
+            \mbox{光学异构}
+		\end{cases}	\\
+	\mbox{构像异构}
+	\end{cases}
+\end{cases}
+\subsection{构造异构}
+\label{sec:org40dd339}
+相同分子式但是原子排列不同
+\subsection{立体异构}
+\label{sec:org22be7f2}
+相同分子式,相同原子连接方式,不同空间排列
+\subsection{手性,手性分子}
+\label{sec:org436b7e6}
+实物和镜像不能重合
+有手性的分子就是手性分子
+\begin{itemize}
+\item 如果实物可以和镜像重合就是同一种物质,是非手性的,无对映体
+\item 两个对映体物化性质相差很小,但是对平面偏振光作用不同,也叫作旋光异构
+\item 能使平面偏振光偏转:旋光性,光学活性
+\end{itemize}
+\subsubsection{外消旋体}
+\label{sec:org65a8534}
+等量旋光异构体混合在一起
+\[
+\%e.e=\frac{[R]-[S]}{[R]+[S]} =\%R -\%S
+\]
+\end{document}

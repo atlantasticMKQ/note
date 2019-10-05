@@ -1,0 +1,77 @@
+% Created 2019-09-28 六 16:33
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\tableofcontents
+
+\section{复变函数的复习}
+\label{sec:orgd1a5c89}
+\subsection{共轭运算的公式}
+\label{sec:org6f7b68d}
+\[
+\overline{z_1 \pm z_2}=\overline{z_1}+\overline{z_2}
+\]
+\[
+\overline{z_1 \cdot z_2}=\overline{z_1} \cdot \overline{z_2}
+\]
+\[
+\overline{(\frac{z_1}{z_2})}=\frac{\overline{z_1}}{\overline{z_2}}
+\]
+\[
+z\overline{z}=Re(z)^2 +Im(z)^2 =|z|^2
+\]
+\subsection{其他}
+\label{sec:org00d76e7}
+\subsubsection{一个实数的共轭是她本身(用于证明)}
+\label{sec:orgb9f1d20}
+\subsubsection{实系数多项式的根共轭存在}
+\label{sec:orga1301bc}
+假设z\(_{\text{0}}\)是n次多项式
+\[
+P(z)=z^n +a_1 z^{n-1}+a_2 z^{n-2} +...+a_{n-1}z +a_n
+\]
+的根,其中各个系数a\(_{\text{1}}\) ,a\(_{\text{2}}\) ,a\(_{\text{3}}\) \ldots{}a\(_{\text{n}}\) 都是实数,由共轭复数的性质有:
+\begin{equation}
+\begin{aligned}
+P(\overline{z_0}) &=(\overline{z_0})^n +a_1 (\overline{z_1})^{n-1} + ... +a_{n-1}\overline{z_0} + a_n \\
+&=(\overline{z_0})^n +\overline{a_1} (\overline{z_1})^{n-1} + ... + \overline{a_{n-1}} \overline{z_0} +\overline{a_n} \\
+&=\overline{(z_0)^n + a_1 (z_0)^{n-1} + a_2 (z_0)^{n-2}+...+a_{n-1}z_0 + a_n}
+&=\overline{P(z_0)}
+&=0
+\end{aligend}
+\end{equation}
+\subsection{复数模长的不等式}
+\label{sec:orge482f80}
+\begin{cases}
+\,|Re(z)|	\\
+\,|Im(z)|
+\end{cases}
+\(\le\) |z| \(\le\) |Re(z)|+|Im(z)|
+
+$\backslash$|z\(_{\text{1}}\)|-|z\(_{\text{2}}\) ||\(\le\) |z\(_{\text{1}}\) \textpm{} z\(_{\text{2}}\) | \(\le\) | z\(_{\text{1}}\)| +|z\(_{\text{2}}\)|
+
+$\backslash$| z\(_{\text{1}}\) + z\(_{\text{2}}\) +\ldots{}+z\(_{\text{n}}\)| \(\le\) |z\(_{\text{1}}\)| + |z\(_{\text{2}}\)| +\ldots{}+|z\(_{\text{n}}\)|
+\end{document}

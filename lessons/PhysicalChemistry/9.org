@@ -1,0 +1,7 @@
+#+TITLE: Physical Chemistry09
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 热力学第二定律
+自发变化

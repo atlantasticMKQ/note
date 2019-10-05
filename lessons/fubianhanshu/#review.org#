@@ -1,0 +1,46 @@
+#+TITLE: 
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 复变函数的复习
+** 共轭运算的公式
+\[
+\overline{z_1 \pm z_2}=\overline{z_1}+\overline{z_2}
+\]
+\[
+\overline{z_1 \cdot z_2}=\overline{z_1} \cdot \overline{z_2}
+\]
+\[
+\overline{(\frac{z_1}{z_2})}=\frac{\overline{z_1}}{\overline{z_2}}
+\]
+\[
+z\overline{z}=Re(z)^2 +Im(z)^2 =|z|^2
+\]
+** 其他
+*** 一个实数的共轭是她本身(用于证明)
+*** 实系数多项式的根共轭存在
+假设z_{0}是n次多项式
+\[
+P(z)=z^n +a_1 z^{n-1}+a_2 z^{n-2} +...+a_{n-1}z +a_n
+\]
+的根,其中各个系数a_1 ,a_2 ,a_3 ...a_n 都是实数,由共轭复数的性质有:
+\begin{equation}
+\begin{aligned}
+P(\overline{z_0}) &=(\overline{z_0})^n +a_1 (\overline{z_1})^{n-1} + ... +a_{n-1}\overline{z_0} + a_n \\
+&=(\overline{z_0})^n +\overline{a_1} (\overline{z_1})^{n-1} + ... + \overline{a_{n-1}} \overline{z_0} +\overline{a_n} \\
+&=\overline{(z_0)^n + a_1 (z_0)^{n-1} + a_2 (z_0)^{n-2}+...+a_{n-1}z_0 + a_n}
+&=\overline{P(z_0)}
+&=0
+\end{aligend}
+\end{equation}
+** 复数模长的不等式
+\begin{cases}
+\,|Re(z)|	\\
+\,|Im(z)|
+\end{cases}
+\leq |z| \leq |Re(z)|+|Im(z)|
+
+\|z_1|-|z_2 ||\leq |z_1 \pm z_2 | \leq | z_1| +|z_2|
+
+\| z_1 + z_2 +...+z_n| \leq |z_1| + |z_2| +...+|z_n|
