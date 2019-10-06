@@ -2,6 +2,8 @@
 #include<stdlib.h>
 #include<string.h>
 #include<time.h>
+#include"lib/types.h"
+#include"lib/status.h"
 
 //Status
 #define OK	0	//ok
