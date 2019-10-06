@@ -1,0 +1,5 @@
+#define MALLOC(type) (type *)malloc(sizeof(type))
+#define MALLOC_NUM(type,num) (type *)malloc(sizeof(type)*(num))
+#define TOTAIL(head,tail) do{for(tail=head;tail->next!=NULL;tail=tail->next);}while(0)
+#define IF_NULL_RET_NULL(ptr) do{if(ptr==NULL)return NULL;}while(0)
+#define IF_NULL_RET_OF(ptr) do{if(ptr==NULL)return OF;}while(0)

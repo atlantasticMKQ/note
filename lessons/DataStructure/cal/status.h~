@@ -1,0 +1,29 @@
+#include<stdio.h>
+/*
+ *status.h
+ */
+//Status
+// #define OK      0	//ok
+// #define ERR	1	//unknown errors
+// #define OF	2	//overfloat of alloc
+// #define UST	3	//unset
+// #define BDAG	4	//bad arg
+// #define POPEND	5       //error of brac stack
+// #define MATCHERR	6       //error of brac not mathch
+// #define NUMERR	7        //error of number
+// #define NAMEERR	8       //error of 
+
+#define OK      	0       	//exit with no problem
+#define ERR     	1	//exit with unknown err
+#define OF      	2	//over float
+#define UST     	3	//unset
+#define BDAG    	4	//bad args type
+#define POPEND  	5	//error of char stack popend
+#define MATCHERR        	6	//error of brac match
+#define NUMERR  	7	//error of str to int
+#define NAMEERR 	8	//error of func/elem name 
+
+
+char *statToStr(int stat)
+{
+	switch(stat)

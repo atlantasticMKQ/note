@@ -1,102 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<time.h>
-#include"lib/types.h"
-#include"lib/status.h"
-#include"op.h"
-#include"int.h"
-#include"bool.h"
-#include"error.h"
-
-/*//Status
-#define OK	0	//ok
-#define ERR	1	//unknown errors
-#define OF	2	//overfloat of alloc
-#define UST	3	//unset
-#define BDAG	4	//bad arg
-#define POPEND	5
-#define MATCHERR	6
-#define NUMERR	7
-#define NAMEERR	8
-
-//Basic operations
-#define DEF	0
-#define ADD	1
-#define SUB	2
-#define IF	3
-#define WHILE	4
-#define LEQ	5
-#define LE	6
-#define BEQ	7
-#define BE	8
-#define EQ	9
-#define LET	10
-
-//Elem types
-#define FUNC	0
-#define INT	1
-#define BOOL	2
-#define STR	3
-#define POLY	4
-
-#define TRUE	1
-#define FALSE	0
-*/
-#define FUNC	0
-#define EVAL	1
-#define ELEM	2
-#define LINK	3
-struct treeNode
-{
-	int type;
-	int state;
-
-	int func;
-	int num;
-	int bool;
-	char *str;
-	//poly *poly;
-
-	struct treeNode *left;
-	struct treeNode *right;
-};
-typedef struct treeNode tn;
-
-struct elemNode
-{
-	int type;
-	char *name;
-
-	int num;
-	int bool;
-	char *str;
-	//poly *poly;
-
-	struct elemNode *next;
-};
-typedef struct elemNode elem;
-
-struct argNode
-{
-	int argIndex;
-	int type;
-
-	struct argNode *next;
-};
-typedef struct argNode arg;
-
-struct funcNode
-{
-	int retType;
-	char *name;
-	int argNum;
-
-	struct funcNode *next;
-	struct argNode *args;
-};
-typedef struct funcNode func;
-
+#include<editline.h>
+#include"tools.h"
 
 struct charStack
 {
@@ -105,10 +11,7 @@ struct charStack
 };
 
 typedef struct charStack cs;
-#define MALLOC(type) (type *)malloc(sizeof(type))
-#define TOTAIL(head,tail) do{for(tail=head;tail->next!=NULL;tail=tail->next);}while(0)
-#define IF_NULL_RET_NULL(ptr) do{if(ptr==NULL)return NULL;}while(0)
-#define IF_NULL_RET_OF(ptr) do{if(ptr==NULL)return OF;}while(0)
+
 cs *csInit()
 {
 	cs *head;
@@ -218,6 +121,7 @@ int bracCheck(char *str)
 					char tmp;
 					err=csPop(stack,&tmp);
 					printf("pop:%c \n",tmp);
+					
 					if(err==POPEND)
 						return NAMEERR;
 					if(tmp!=*c)
@@ -275,7 +179,9 @@ int ifCharInLaw(char c)
 		return TRUE;
 	if(c<='Z'&&c>='A')
 		return TRUE;
-	if(c==' ')
+	if(c<='9'&&c>='0')
+		return TRUE;
+	if(c==' '||c=='.'||c=='-')
 		return TRUE;
 	if(c=='"')
 		return TRUE;
@@ -283,28 +189,18 @@ int ifCharInLaw(char c)
 }
 int gramCheck(char *str)
 {
+	if(!ifLeft(*str))
+		return MATCHERR;
 	for(char *c=str;*c!='\0'&&*c!='\n';c++)
 		{
 			if(ifCharInLaw(*c)==FALSE)
 				return NAMEERR;
 		}
-			
-	if(bracCheck(str)==MATCHERR)
+
+	int err;
+	if((err=bracCheck(str))!=OK)
 		{
-			return MATCHERR;
+			return err;
 		}
 	return OK;
-}
-	
-	
-					
-							
-					
-					
-int main()
-{
-	char line[64];
-	scanf("%s",line);
-	int i=gramCheck(line);
-	printf("%i\n",i);
 }

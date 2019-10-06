@@ -2,398 +2,221 @@
 #include<stdlib.h>
 #include<string.h>
 #include<time.h>
+#include<editline.h>
+/*
+#include"lib/types.h"
+#include"lib/status.h"
+#include"lib/op.h"
+#include"lib/int.h"
+#include"lib/bool.h"
+#include"lib/error.h"
+*/
+//#include"lib/gramCheck.h"
 
-//Status
-#define OK	0	//ok
-#define ERR	1	//unknown errors
-#define OF	2	//overfloat of alloc
-#define UST	3	//unset
-#define BDAG	4	//bad arg
-#define POPEND	5
-#define MATCHERR	6
-#define NUMERR	7
-#define NAMEERR	8
-
-//Basic operations
-#define DEF	0
-#define ADD	1
-#define SUB	2
-#define IF	3
-#define WHILE	4
-#define LEQ	5
-#define LE	6
-#define BEQ	7
-#define BE	8
-#define EQ	9
-#define LET	10
-
-//Elem types
-#define FUNC	0
-#define INT	1
-#define BOOL	2
-#define STR	3
-#define POLY	4
-
-#define TRUE	1
-#define FALSE	0
+#include"lib/func.h"
 
 #define FUNC	0
 #define EVAL	1
 #define ELEM	2
 #define LINK	3
+
+
 struct treeNode
 {
 	int type;
 	int state;
 
-	int func;
-	int num;
-	int bool;
-	char *str;
+	char *elem;
 	//poly *poly;
 
 	struct treeNode *left;
 	struct treeNode *right;
 };
-typedef struct treeNode tn;
+typedef struct treeNode tree;
 
-struct elemNode
+tree *treeInit()
 {
-	int type;
-	char *name;
-
-	int num;
-	int bool;
-	char *str;
-	//poly *poly;
-
-	struct elemNode *next;
-};
-typedef struct elemNode elem;
-
-struct argNode
-{
-	int index;
-	int type;
-
-	struct argNode *next;
-};
-typedef struct argNode arg;
-
-struct funcNode
-{
-	int retType;
-	char *name;
-	int argNum;
-
-	struct funcNode *next;
-	struct argNode *args;
-};
-typedef struct funcNode func;
-
-
-struct charStack
-{
-	char c;
-	struct charStack *next;
-};
-
-typedef struct charStack cs;
-#define MALLOC(type) (type *)malloc(sizeof(type))
-#define TOTAIL(head,tail) do{for(tail=head;tail->next!=NULL;tail=tail->next);}while(0)
-#define IF_NULL_RET_NULL(ptr) do{if(ptr==NULL)return NULL;}while(0)
-#define IF_NULL_RET_OF(ptr) do{if(ptr==NULL)return OF;}while(0)
-arg *argInit()
-{
-	arg *head;
-	head=MALLOC(arg);
-	IF_NULL_RET_NULL(head);
-	head->type=FUNC;
-	head->index=0;
-	head->next=NULL;
-	return head;
+	tree *root=MALLOC(tree);
+	IF_NULL_RET_NULL(root);
+	root->type=UNSET;
+	root->state=EVAL;
+	root->elem=NULL;
+	root->left=NULL;
+	root->right=NULL;
+	
+	return root;
 }
-int addArg(arg *head,int type)
+tree *treeAddL(tree *root,int type,int state,char *elem)
 {
-	arg *tail;
-	TOTAIL(head,tail);
-	int index=tail->index+1;
-	tail->next=MALLOC(arg);
-	tail=tail->next;
-	IF_NULL_RET_OF(tail);
-	tail->next=NULL;
-	tail->type=type;
-	tail->index=index;
-	return OK;
+	tree *left=MALLOC(tree);
+	IF_NULL_RET_NULL(left);
+	left->type=type;
+	left->state=state;
+	left->elem=elem;
+	root->left=left;
+	left->left=NULL;
+	left->right=NULL;
+	return left;
 }
-arg *cloneArg(arg *head)
+tree *treeAddR(tree *root,int type,int state,char *elem)
 {
-	arg *clone=argInit();
-	IF_NULL_RET_NULL(clone);
-	arg *tmp;
-	int err;
-	for(tmp=head;tmp->next!=NULL;tmp=tmp->next)
-	{
-		err=addArg(clone,tmp->type);
-		if(err!=OK)
+	tree *tmp;
+	for(tmp=root;tmp->right!=NULL;tmp=tmp->right);
+	tmp->right=MALLOC(tree);
+	IF_NULL_RET_NULL(tmp->right);
+	tmp=tmp->right;
+	tmp->left=NULL;
+	tmp->right=NULL;
+	tmp->type=UNSET;
+	tmp->state=LINK;
+	tmp->elem=NULL;
+	treeAddL(tmp,type,state,elem);
+	return tmp->left;
+}
+		
+		
+
+char *readLen(char *ptr,int num)
+{
+	char *line=MALLOC_NUM(char,FUNC_NAME_SIZE);
+	IF_NULL_RET_NULL(line);
+	for(int i=0;i<num;i++)
 		{
-			freeArg(clone);
-			return NULL;
+			line[i]=*ptr;
+			ptr++;
 		}
-	}
-	return clone;
+	line[num]='\0';
+	return line;
 }
-
-int printArg(arg arg)
+int plantTree(tree *root,char *str,elem *head)
 {
-	printf("%s,",typeToStr(arg->type));
-	return OK;
-}
-int foreachArg(arg *head,int (* method)(arg arg))
-{
-	for(arg *tmp=head;tmp->next!=NULL;tmp=tmp->next)
-	{
-		method(tmp->next);
-	}
-	return OK;
-}
-func *funcInit()
-{
-	func *head;
-	head=MALLOC(func);
-	IF_NULL_RET_NULL(head);
-	head->retType=FUNC;
-	head->name=NULL;
-	head->argNum=0;
-	head->next=NULL;
-	head->args=NULL;
-	return head;
-}
-int addFunc(func *head,int retType,char *name,int argNum,arg *argHead)
-{
-	func *tail;
-	TOTAIL(head,tail);
-	tail->next=MALLOC(func);
-	tail=tail->next;
-	IF_NULL_RET_OF(tail);
-	tail->retType=retType;
-	tail->name=name;
-	tail->argNum=argNum;
-	tail->args=argHead;
-	tail->next=NULL;
-	return OK;
-}
-int printFunc(func func)
-{
-	printf("%s %s(",typeToStr(func->retType),func->name);
-	foreachArg(func->args,printArg);
-	printf(")\n");
-	return OK;
-}
-int foreachFunc(func *head,int (*method)(func func))
-{
-	for(func *tmp=head;tmp->next!=NULL;tmp=tmp->next)
-	{
-		method(tmp->next);
-	}
-	return OK;
-}
-func *
-	
-cs *csInit()
-{
-	cs *head;
-	head=MALLOC(cs);
-	IF_NULL_RET_NULL(head);
-	head->c='\0';
-	head->next=NULL;
-	return head;
-}
-int csPush(cs *head,char c)
-{
-	cs *tail;
-	TOTAIL(head,tail);
-	
-	tail->next=MALLOC(cs);
-	tail=tail->next;
-	IF_NULL_RET_OF(tail);
-	tail->next=NULL;
-	tail->c=c;
-	return OK;
-}
-int csPop(cs *head,char *c)
-{
-	cs *tail;
-	TOTAIL(head,tail);
-	if(head==tail)
-		return POPEND;
-	cs *tailFront;
-	for(tailFront=head;tailFront->next->next!=NULL;tailFront=tailFront->next);
-	tailFront->next=NULL;
-	*c=tail->c;
-	free(tail);
-	return OK;
-}
-int csFree(cs *head)
-{
-	
-	if(head==NULL)
-		return OK;
-	csFree(head->next);
-	free(head);
-	return OK;
-}
-int ifEmptyCs(cs *head)
-{
-	cs *tail;
-	TOTAIL(head,tail);
-	if(head==tail)
-		return TRUE;
-	return FALSE;
-}
-int ifNum(char c)
-{
-	if(c<='9'&&c>='0')
-		return TRUE;
-	return FALSE;
-}
-int ifLetter(char c)
-{
-	if((c<='z'&&c>='a')||(c<='Z'&&c>='A'))
-		return TRUE;
-	return FALSE;
-}
-int ifBlank(char c)
-{
-	if(c=='\n'||c==' ')
-		return TRUE;
-	return FALSE;
-}
-int ifLeft(char c)
-{
-	if(c=='('||c=='{'||c=='[')
-		return TRUE;
-	return FALSE;
-}
-int ifRight(char c)
-{
-	if(c==')'||c=='}'||c==']')
-		return TRUE;
-	return FALSE;
-}
-int ifMatch(char c1,char c2)
-{
-	if(!(ifLeft(c1)&&ifRight(c2)))
-		return FALSE;
-	if(c1=='('&&c2!=')')
-		return FALSE;
-	if(c1=='['&&c2!=']')
-		return FALSE;
-	if(c1=='{'&&c2!='}')
-		return FALSE;
-	return TRUE;
-}
-#define IF_STACK_OF(stack) do{if(err==OF){printf("stack OF\n");csFree(stack);return OF;}}while(0)
-int bracCheck(char *str)
-{
-	cs *stack=csInit();
-	IF_NULL_RET_OF(stack);
-	int err;
-	for(char *c=str;*c!='\0';c++)
+	printf("----enterPlantTree----\n");
+	char *ptr=str;
+	char *subPtr=str;
+	for(ptr=str;!ifLeft(*ptr);ptr++);
+	printf("left:%c\n",*ptr);
+	for(;ifBlank(*ptr)||ifLeft(*ptr);ptr++);
+	subPtr=ptr;
+	int functag=0;
+	while(TRUE)
 		{
-			if(*c=='"')
+			printf(">loop\n");
+			if(ifLetter(*ptr))
 				{
-					printf("here is a \"\n");
-					char tmp;
-					err=csPop(stack,&tmp);
-					printf("pop:%c \n",tmp);
-					if(err==POPEND)
+
+					for(subPtr=ptr;*subPtr!=' '&&!ifRight(*subPtr);subPtr++)
+						{
+							if(!ifLetter(*subPtr))
+								return NAMEERR;
+						}
+					char *name=readLen(ptr,subPtr-ptr);
+					printf("name:%s\n",name);
+					if(functag==0)
+						{
+							treeAddL(root,FUNC,ELEM,name);
+							functag=1;
+						}
+					else
+						{
+							elem *elem=findElem(head,name);
+							int type;
+							if(elem==NULL)
+								type=UNSET;
+							else
+								type=elem->type;
+							treeAddR(root,type,ELEM,name);
+						}
+					for(;*subPtr==' ';subPtr++);
+					ptr=subPtr;
+					
+				}
+			else if(ifNum(*ptr)||*ptr=='-')
+				{
+
+					int point=0;
+					for(subPtr=ptr+1;*subPtr!=' '&&!ifRight(*subPtr);subPtr++)
+						{
+							if(*subPtr=='.'&&point==0)
+								point=1;
+							else if(*subPtr=='.'&&point==1)
+								return NUMERR;
+							if(!ifNum(*subPtr)&&*subPtr!='.')
+								return NUMERR;
+						}
+					char *num=readLen(ptr,subPtr-ptr);
+					printf("num:%s\n",num);
+					if(functag!=1)
 						return NAMEERR;
-					if(tmp!=*c)
-						{
-										
-							
-							err=csPush(stack,tmp);
-							printf("push:%c\n",tmp);
-							IF_STACK_OF(stack);
-							err=csPush(stack,*c);
-							printf("push:%c\n",*c);
-							IF_STACK_OF(stack);
-						}
-				
-				
+					int type;
+					if(point==0)
+						type=INT;
+					else if(point==1)
+						type=FLOAT;
+					treeAddR(root,type,ELEM,num);
+					for(;*subPtr==' ';subPtr++);
+					ptr=subPtr;
 				}
-							
-			if(ifLeft(*c))
+			else if(ifLeft(*ptr))
 				{
-					printf("left brac '%c'\n",*c);
-					err=csPush(stack,*c);
-					printf("push:%c\n",*c);
-					if(err==OF)
+
+					if(functag!=1)
 						{
-							printf("stack OF\n");
-							csFree(stack);
-							return OF;
+							return ERR;
 						}
+					tree *newRoot=treeAddR(root,UNSET,LINK,NULL);
+					plantTree(newRoot,ptr,head);
+					int brac=1;
+					for(subPtr=ptr+1;!(ifRight(*subPtr)&&brac==1);subPtr++)
+						{
+							
+							if(ifRight(*subPtr))
+								brac--;
+							else if(ifLeft(*subPtr))
+								brac++;
+						}
+
+					subPtr++;
+					for(;*subPtr==' ';subPtr++);
+					ptr=subPtr;
 				}
-			if(ifRight(*c))
+			else if(*ptr=='"')
 				{
-					printf("right brac '%c'\n",*c);
-					char poped;
-					err=csPop(stack,&poped);
-					printf("pop:%c \n",poped);
-					if(!ifMatch(poped,*c))
+					if(functag!=1)
 						{
-							csFree(stack);
-							return MATCHERR;
+							return ERR;
 						}
+					for(subPtr=ptr+1;*subPtr!='"';subPtr++);
+						
+					char *str=readLen(ptr+1,subPtr-ptr-1);
+					printf("str:%s\n",str);
+					treeAddL(root,STR,ELEM,str);
+					subPtr++;
+					for(;*subPtr==' ';subPtr++);
+					ptr=subPtr;
+				}
+			else if(ifRight(*ptr))
+				{
+					printf("right:%c\n",*ptr);
+					printf("----exitPlantTree----\n");
+					return OK;
 				}
 		}
-	if(ifEmptyCs(stack))
-		{
-			csFree(stack);
-			return OK;
-		}
-	return MATCHERR;
-}
-int ifCharInLaw(char c)
-{
-	if(c=='{'||c=='}'||c=='('||c==')'||c=='['||c==']')
-		return TRUE;
-	if(c<='z'&&c>='a')
-		return TRUE;
-	if(c<='Z'&&c>='A')
-		return TRUE;
-	if(c==' ')
-		return TRUE;
-	if(c=='"')
-		return TRUE;
-	return FALSE;
-}
-int gramCheck(char *str)
-{
-	for(char *c=str;*c!='\0'&&*c!='\n';c++)
-		{
-			if(ifCharInLaw(*c)==FALSE)
-				return NAMEERR;
-		}
-			
-	if(bracCheck(str)==MATCHERR)
-		{
-			return MATCHERR;
-		}
+	
 	return OK;
 }
 	
 	
-					
-							
-					
-					
+			
+			
+
 int main()
 {
-	char line[64];
-	scanf("%s",line);
+	char *line=readline("mkq> ");
 	int i=gramCheck(line);
-	printf("%i\n",i);
+	printf("%s\n",statToStr(i));
+	tree *root=treeInit();
+	elem *head=elemInit();
+	int b=plantTree(root,line,head);
+	printf("%s\n",statToStr(b));
+	free(NULL);
 }
