@@ -73,7 +73,7 @@ typedef struct elemNode elem;
 
 struct argNode
 {
-	int argIndex;
+	int index;
 	int type;
 
 	struct argNode *next;
@@ -103,6 +103,103 @@ typedef struct charStack cs;
 #define TOTAIL(head,tail) do{for(tail=head;tail->next!=NULL;tail=tail->next);}while(0)
 #define IF_NULL_RET_NULL(ptr) do{if(ptr==NULL)return NULL;}while(0)
 #define IF_NULL_RET_OF(ptr) do{if(ptr==NULL)return OF;}while(0)
+arg *argInit()
+{
+	arg *head;
+	head=MALLOC(arg);
+	IF_NULL_RET_NULL(head);
+	head->type=FUNC;
+	head->index=0;
+	head->next=NULL;
+	return head;
+}
+int addArg(arg *head,int type)
+{
+	arg *tail;
+	TOTAIL(head,tail);
+	int index=tail->index+1;
+	tail->next=MALLOC(arg);
+	tail=tail->next;
+	IF_NULL_RET_OF(tail);
+	tail->next=NULL;
+	tail->type=type;
+	tail->index=index;
+	return OK;
+}
+arg *cloneArg(arg *head)
+{
+	arg *clone=argInit();
+	IF_NULL_RET_NULL(clone);
+	arg *tmp;
+	int err;
+	for(tmp=head;tmp->next!=NULL;tmp=tmp->next)
+	{
+		err=addArg(clone,tmp->type);
+		if(err!=OK)
+		{
+			freeArg(clone);
+			return NULL;
+		}
+	}
+	return clone;
+}
+
+int printArg(arg arg)
+{
+	printf("%s,",typeToStr(arg->type));
+	return OK;
+}
+int foreachArg(arg *head,int (* method)(arg arg))
+{
+	for(arg *tmp=head;tmp->next!=NULL;tmp=tmp->next)
+	{
+		method(tmp->next);
+	}
+	return OK;
+}
+func *funcInit()
+{
+	func *head;
+	head=MALLOC(func);
+	IF_NULL_RET_NULL(head);
+	head->retType=FUNC;
+	head->name=NULL;
+	head->argNum=0;
+	head->next=NULL;
+	head->args=NULL;
+	return head;
+}
+int addFunc(func *head,int retType,char *name,int argNum,arg *argHead)
+{
+	func *tail;
+	TOTAIL(head,tail);
+	tail->next=MALLOC(func);
+	tail=tail->next;
+	IF_NULL_RET_OF(tail);
+	tail->retType=retType;
+	tail->name=name;
+	tail->argNum=argNum;
+	tail->args=argHead;
+	tail->next=NULL;
+	return OK;
+}
+int printFunc(func func)
+{
+	printf("%s %s(",typeToStr(func->retType),func->name);
+	foreachArg(func->args,printArg);
+	printf(")\n");
+	return OK;
+}
+int foreachFunc(func *head,int (*method)(func func))
+{
+	for(func *tmp=head;tmp->next!=NULL;tmp=tmp->next)
+	{
+		method(tmp->next);
+	}
+	return OK;
+}
+func *
+	
 cs *csInit()
 {
 	cs *head;
