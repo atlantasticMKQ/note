@@ -1,0 +1,211 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<editline.h>
+#define OK	0
+#define POPEND	1
+#define OF	2
+#define MALLOC(type) (type *)malloc(sizeof(type))
+#define MALLOC_NUM(type,num) (type *)malloc(sizeof(type)*(num))
+#define TOTAIL(head,tail) do{for(tail=head;tail->next!=NULL;tail=tail->next);}while(0)
+#define IF_NULL_RET_NULL(ptr) do{if(ptr==NULL)return NULL;}while(0)
+#define IF_NULL_RET_OF(ptr) do{if(ptr==NULL)return OF;}while(0)
+#define CK_ERR do{if(err!=OK){csFree(opStack);printf("err:%i\n",err);return err;}}while(0)
+#define TRUE 	1
+#define FALSE 	0
+
+
+
+struct charStack
+{
+	char c;
+	struct charStack *next;
+};
+
+typedef struct charStack cs;
+
+cs *csInit()
+{
+	cs *head;
+	head=MALLOC(cs);
+	IF_NULL_RET_NULL(head);
+	head->c='\0';
+	head->next=NULL;
+	return head;
+}
+int csPush(cs *head,char c)
+{
+	cs *tail;
+	TOTAIL(head,tail);
+
+	tail->next=MALLOC(cs);
+	tail=tail->next;
+	IF_NULL_RET_OF(tail);
+	tail->next=NULL;
+	tail->c=c;
+       	//printf("push:%c\n",c);
+	return OK;
+}
+int csPop(cs *head,char *c)
+{
+	cs *tail;
+	TOTAIL(head,tail);
+	if(head==tail)
+		return POPEND;
+	cs *tailFront;
+	for(tailFront=head;tailFront->next->next!=NULL;tailFront=tailFront->next);
+	tailFront->next=NULL;
+	*c=tail->c;
+	free(tail);
+	//printf("pop:%c\n",*c);
+	return OK;
+}
+int csFree(cs *head)
+{
+
+	if(head==NULL)
+		return OK;
+	csFree(head->next);
+	free(head);
+	return OK;
+}
+int ifEmptyCs(cs *head)
+{
+	cs *tail;
+	TOTAIL(head,tail);
+	if(head==tail)
+		return TRUE;
+	return FALSE;
+}
+int checkTop(cs *head,char *top)
+{
+	char c;
+	int err=csPop(head,&c);
+	if(err!=OK)
+		return err;
+       
+	*top=c;
+	err=csPush(head,c);
+	if(err!=OK)
+		return err;
+	return OK;
+}
+	
+int ifLetter(char c)
+{
+	if((c<='z'&&c>='a')||(c<='Z'&&c>='A'))
+		return TRUE;
+	return FALSE;
+}
+int inStack(char c)
+{
+	switch(c)
+		{
+		case '#':
+			return -1;
+		case '(':
+			return 0;
+		case '+':
+			return 1;
+		case '-':
+			return 1;
+		case '*':
+			return 2;
+		case '/':
+			return 2;
+		default:
+			return -2;
+		}
+}
+int outStack(char c)
+{
+	switch(c)
+		{
+		case '#':
+			return -1;
+		case '(':
+			return 3;
+		case '+':
+			return 1;
+		case '-':
+			return 1;
+		case '*':
+			return 2;
+		case '/':
+			return 2;
+		case ')':
+			return 0;
+
+
+		default:
+			return -2;
+		}
+}
+int ifOp(char c)
+{
+	if(c=='#'||c=='('||c=='+'||c=='-'||c=='*'||c=='/'||c==')')
+		return TRUE;
+	else
+		return FALSE;
+}
+	
+			
+int main()
+{
+	int err;
+	char *line=MALLOC_NUM(char,128);
+	char *tmp=readline("cal>>");
+	sprintf(line,"%s#",tmp);
+	cs *opStack=csInit();
+	//cs *varStack=csInit();
+	err=csPush(opStack,'#');
+	CK_ERR;
+	printf("line:%s\n",line);
+	int var=2;
+	for(char *c=line;*c!='\n'&&*c!='\0';c++)
+		{
+			if(ifOp(*c))
+				{
+					char top;
+					err=checkTop(opStack,&top);
+					CK_ERR;
+		   
+					if(inStack(top)<=outStack(*c))
+						{
+							err=csPush(opStack,*c);
+							CK_ERR;
+						}
+					else if(inStack(top)>outStack(*c))
+						{
+							err=csPop(opStack,&top);
+							CK_ERR;
+							printf("%c",top);
+							if(*c==')')
+								{
+									for(char top='#';top!='(';)
+										{
+											err=csPop(opStack,&top);
+											CK_ERR;
+											if(top!='(')
+												{
+													printf("%c",top);
+												}
+										}
+									
+								}
+							else
+								{
+									err=csPush(opStack,*c);
+									CK_ERR;
+									
+								}
+						}
+				}
+			else if(ifLetter(*c))
+				{
+					printf("%c",*c);
+					
+				}
+		}
+	printf("\n");
+}
+			
