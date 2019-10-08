@@ -1,16 +1,16 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<time.h>
-#include<editline.h>
-#include"types.h"
+//#include<time.h>
+//#include<editline.h>
+#include"2-types.h"
 //#include"status.h"
-#include"op.h"
-#include"int.h"
+//#include"op.h"
+//#include"int.h"
 //#include"bool.h"
-#include"error.h"
-#include"gramCheck.h"
-#include"tools.h"
+//#include"error.h"
+//#include"gramCheck.h"
+//#include"tools.h"
 
 #define FUNC_NAME_SIZE 	32
 

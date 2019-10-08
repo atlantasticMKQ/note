@@ -1,4 +1,4 @@
-#include<stdio.h>
+//#include<stdio.h>
 //Basic operations
 //ret func
 #define DEF	0	//defun func

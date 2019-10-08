@@ -1,8 +1,8 @@
-#include<stdio.h>
-#include"tools.h"
-#include"bool.h"
-#include"status.h"
-#include"int.h"
+//#include<stdio.h>
+//#include"tools.h"
+//#include"bool.h"
+#include"1-status.h"
+//#include"int.h"
 #define UNSET	-1
 #define FUNC	0
 #define INT	1

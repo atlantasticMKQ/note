@@ -1,7 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<time.h>
+
 #include<editline.h>
 /*
 #include"lib/types.h"
@@ -11,9 +8,9 @@
 #include"lib/bool.h"
 #include"lib/error.h"
 */
-//#include"lib/gramCheck.h"
+#include"lib/4-gramCheck.h"
 
-#include"lib/func.h"
+//#include"lib/func.h"
 
 #define FUNC	0
 #define EVAL	1

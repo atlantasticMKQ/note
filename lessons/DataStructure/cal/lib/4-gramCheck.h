@@ -2,8 +2,9 @@
 #include<stdlib.h>
 #include<string.h>
 #include<editline.h>
-#include"tools.h"
-
+//#include"tools.h"
+//#include"types.h"
+#include"3-func.h"
 struct charStack
 {
 	char c;

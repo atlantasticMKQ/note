@@ -1,0 +1,18 @@
+#include<stdio.h>
+#include<stdlib.h>
+int max(int *array,int n)
+{
+	if(n==1)
+		return array[0];
+	int submax=max(array+1,n-1);
+	if(submax>array[0])
+		return submax;
+	return array[0];
+}
+int main()
+{
+	int array[5]={2,43,1232,4,5};
+	int max=max(array,5);
+	printf("%i\n",max);
+}
+      
