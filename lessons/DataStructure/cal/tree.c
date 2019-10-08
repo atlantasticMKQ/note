@@ -1,31 +1,48 @@
-
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+#include<string.h>
 #include<editline.h>
-/*
-#include"lib/types.h"
-#include"lib/status.h"
-#include"lib/op.h"
-#include"lib/int.h"
+
+#include"lib/tools.h"
 #include"lib/bool.h"
-#include"lib/error.h"
-*/
-#include"lib/4-gramCheck.h"
+#include"lib/status.h"
+#include"lib/types.h"
+#include"lib/str.h"
 
-//#include"lib/func.h"
+#include"lib/elem.h"
+#include"lib/func.h"
+#include"lib/gramCheck.h"
 
+//state
 #define FUNC	0
 #define EVAL	1
 #define ELEM	2
 #define LINK	3
 
 
+#define EXIT	100
+char *stateToStr(int state)
+{
+	switch(state)
+		{
+		case FUNC:
+			return "FUNC";
+		case EVAL:
+			return "EVAL";
+		case ELEM:
+			return "ELEM";
+		case LINK:
+			return "LINK";
+		default :
+			return "UNKNOWN";
+		}
+}
 struct treeNode
 {
 	int type;
 	int state;
-
 	char *elem;
-	//poly *poly;
-
 	struct treeNode *left;
 	struct treeNode *right;
 };
@@ -53,6 +70,7 @@ tree *treeAddL(tree *root,int type,int state,char *elem)
 	root->left=left;
 	left->left=NULL;
 	left->right=NULL;
+       	printf("treeAdd->\ntype:%s\nstate:%s\nelem:%s\n<<<<\n",typeToStr(type),stateToStr(state),elem);
 	return left;
 }
 tree *treeAddR(tree *root,int type,int state,char *elem)
@@ -73,25 +91,14 @@ tree *treeAddR(tree *root,int type,int state,char *elem)
 		
 		
 
-char *readLen(char *ptr,int num)
-{
-	char *line=MALLOC_NUM(char,FUNC_NAME_SIZE);
-	IF_NULL_RET_NULL(line);
-	for(int i=0;i<num;i++)
-		{
-			line[i]=*ptr;
-			ptr++;
-		}
-	line[num]='\0';
-	return line;
-}
+
 int plantTree(tree *root,char *str,elem *head)
 {
 	printf("----enterPlantTree----\n");
 	char *ptr=str;
 	char *subPtr=str;
 	for(ptr=str;!ifLeft(*ptr);ptr++);
-	printf("left:%c\n",*ptr);
+	//printf("left:%c\n",*ptr);
 	for(;ifBlank(*ptr)||ifLeft(*ptr);ptr++);
 	subPtr=ptr;
 	int functag=0;
@@ -107,7 +114,7 @@ int plantTree(tree *root,char *str,elem *head)
 								return NAMEERR;
 						}
 					char *name=readLen(ptr,subPtr-ptr);
-					printf("name:%s\n",name);
+					//printf("name:%s\n",name);
 					if(functag==0)
 						{
 							treeAddL(root,FUNC,ELEM,name);
@@ -141,7 +148,7 @@ int plantTree(tree *root,char *str,elem *head)
 								return NUMERR;
 						}
 					char *num=readLen(ptr,subPtr-ptr);
-					printf("num:%s\n",num);
+					//printf("num:%s\n",num);
 					if(functag!=1)
 						return NAMEERR;
 					int type;
@@ -160,7 +167,7 @@ int plantTree(tree *root,char *str,elem *head)
 						{
 							return ERR;
 						}
-					tree *newRoot=treeAddR(root,UNSET,LINK,NULL);
+					tree *newRoot=treeAddR(root,UNSET,EVAL,NULL);
 					plantTree(newRoot,ptr,head);
 					int brac=1;
 					for(subPtr=ptr+1;!(ifRight(*subPtr)&&brac==1);subPtr++)
@@ -185,7 +192,7 @@ int plantTree(tree *root,char *str,elem *head)
 					for(subPtr=ptr+1;*subPtr!='"';subPtr++);
 						
 					char *str=readLen(ptr+1,subPtr-ptr-1);
-					printf("str:%s\n",str);
+					//printf("str:%s\n",str);
 					treeAddL(root,STR,ELEM,str);
 					subPtr++;
 					for(;*subPtr==' ';subPtr++);
@@ -193,7 +200,7 @@ int plantTree(tree *root,char *str,elem *head)
 				}
 			else if(ifRight(*ptr))
 				{
-					printf("right:%c\n",*ptr);
+					//printf("right:%c\n",*ptr);
 					printf("----exitPlantTree----\n");
 					return OK;
 				}
@@ -201,19 +208,101 @@ int plantTree(tree *root,char *str,elem *head)
 	
 	return OK;
 }
+int eval(tree *root,func *fhead,elem *ehead)
+{
 	
+	if(root->state!=EVAL||root->left->type!=FUNC)
+		return MATCHERR;
+	if(strcmp(root->left->elem,"def")==0)
+		{
+			arg *argHead=argInit();
+			IF_NULL_RET_OF(argHead);
+			if(root->right==NULL||root->right->left==NULL||root->right->right->left==NULL)
+				return ERR;
+			
+			tree *arg=root->right->right->left;
+			if(strcmp(arg->left->elem,"arg")!=0)
+				return ERR;
+			int type=1;
+			for(tree *tmp=arg->right;tmp!=NULL;tmp=tmp->right)
+				{
+					if(type==1)
+						{
+							if(tmp->right==NULL||tmp->right->left==NULL)
+								return ERR;
+							addArg(argHead,strToType(tmp->left->elem),tmp->right->left->elem);
+							type=0;
+						}
+					else
+						type=1;
+				}
+			addFunc(fhead,UNSET,root->right->left->elem,0,argHead);
+			root->state=ELEM;
+			root->elem="TRUE";
+			root->type=BOOL;
+			
+			return OK;
+		}
+	
+	if(strcmp(root->left->elem,"help")==0)
+		{
+			printf("here is some help\n");
+			root->state=ELEM;
+			root->elem="TRUE";
+			root->type=BOOL;
+			return OK;
+		}
+	if(strcmp(root->left->elem,"funclist")==0)
+		{
+			foreachFunc(fhead,printFunc);
+			root->state=ELEM;
+			root->elem="TRUE";
+			root->type=BOOL;
+			return OK;
+		}
+	if(strcmp(root->left->elem,"quit")==0)
+		return EXIT;
+		    
+	//eval args
+	for(tree *tmp=root->right;tmp!=NULL;tmp=tmp->right)
+		{
+			if(tmp->left==NULL)
+				return ERR;
+			if(tmp->left->state==EVAL)
+				eval(tmp->left,fhead,ehead);
+			else if(tmp->left->state!=ELEM)
+				return ERR;
+		}
+	return OK;
+}
 	
 			
 			
 
 int main()
 {
-	char *line=readline("mkq> ");
-	int i=gramCheck(line);
-	printf("%s\n",statToStr(i));
-	tree *root=treeInit();
+	func *fhead=funcInit();
 	elem *head=elemInit();
-	int b=plantTree(root,line,head);
-	printf("%s\n",statToStr(b));
-	free(NULL);
+	while(TRUE)
+		{
+			
+			char *line=readline("mkq> ");
+			if(gramCheck(line)!=OK)
+				{
+					printf("gramCheck not ok!\n");
+				}
+			
+			tree *root=treeInit();			
+
+
+			if(plantTree(root,line,head)!=OK)
+				{
+					printf("plant not OK\n");
+					continue;
+				}
+			
+			int err=eval(root,fhead,NULL);
+			if(err==EXIT)
+				return 0;
+		}
 }

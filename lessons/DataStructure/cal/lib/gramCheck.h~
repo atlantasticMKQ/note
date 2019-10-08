@@ -1,15 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<time.h>
-#include<editline.h>
-#include"lib/types.h"
-#include"lib/status.h"
-#include"lib/op.h"
-#include"lib/int.h"
-#include"lib/bool.h"
-#include"lib/error.h"
-
 struct charStack
 {
 	char c;
@@ -17,11 +5,7 @@ struct charStack
 };
 
 typedef struct charStack cs;
-#define MALLOC(type) (type *)malloc(sizeof(type))
-#define MALLOC_NUM(type,num) (type *)malloc(sizeof(type)*(num))
-#define TOTAIL(head,tail) do{for(tail=head;tail->next!=NULL;tail=tail->next);}while(0)
-#define IF_NULL_RET_NULL(ptr) do{if(ptr==NULL)return NULL;}while(0)
-#define IF_NULL_RET_OF(ptr) do{if(ptr==NULL)return OF;}while(0)
+
 cs *csInit()
 {
 	cs *head;
@@ -115,7 +99,7 @@ int ifMatch(char c1,char c2)
 		return FALSE;
 	return TRUE;
 }
-#define IF_STACK_OF(stack) do{if(err==OF){printf("stack OF\n");csFree(stack);return OF;}}while(0)
+
 int bracCheck(char *str)
 {
 	cs *stack=csInit();

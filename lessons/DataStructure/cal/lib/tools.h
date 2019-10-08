@@ -3,3 +3,4 @@
 #define TOTAIL(head,tail) do{for(tail=head;tail->next!=NULL;tail=tail->next);}while(0)
 #define IF_NULL_RET_NULL(ptr) do{if(ptr==NULL)return NULL;}while(0)
 #define IF_NULL_RET_OF(ptr) do{if(ptr==NULL)return OF;}while(0)
+#define IF_STACK_OF(stack) do{if(err==OF){printf("stack OF\n");csFree(stack);return OF;}}while(0)

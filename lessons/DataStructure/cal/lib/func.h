@@ -1,25 +1,8 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-//#include<time.h>
-//#include<editline.h>
-#include"2-types.h"
-//#include"status.h"
-//#include"op.h"
-//#include"int.h"
-//#include"bool.h"
-//#include"error.h"
-//#include"gramCheck.h"
-//#include"tools.h"
-
-#define FUNC_NAME_SIZE 	32
-
-
 struct argNode
 {
 	int index;
 	int type;
-
+	char *name;
 	struct argNode *next;
 };
 typedef struct argNode arg;
@@ -41,10 +24,11 @@ arg *argInit()
 	IF_NULL_RET_NULL(head);
 	head->type=FUNC;
 	head->index=0;
+	head->name=NULL;
 	head->next=NULL;
 	return head;
 }
-int addArg(arg *head,int type)
+int addArg(arg *head,int type,char *name)
 {
 	arg *tail;
 	TOTAIL(head,tail);
@@ -55,6 +39,7 @@ int addArg(arg *head,int type)
 	tail->next=NULL;
 	tail->type=type;
 	tail->index=index;
+	tail->name=name;
 	return OK;
 }
 int *freeArg(arg *head)
@@ -64,6 +49,7 @@ int *freeArg(arg *head)
 			return OK;
 		}
 	freeArg(head->next);
+	free(head->name);
 	free(head);
 	return OK;
 }
@@ -73,9 +59,13 @@ arg *cloneArg(arg *head)
 	IF_NULL_RET_NULL(clone);
 	arg *tmp;
 	int err;
+	char *name;
 	for(tmp=head;tmp->next!=NULL;tmp=tmp->next)
 	{
-		err=addArg(clone,tmp->type);
+		name=copyStr(tmp->name);
+		if(tmp!=head&&name==NULL)
+			return NULL;
+		err=addArg(clone,tmp->type,name);
 		if(err!=OK)
 		{
 			freeArg(clone);
@@ -87,7 +77,7 @@ arg *cloneArg(arg *head)
 
 int printArg(arg thisArg)
 {
-	printf("%s,",typeToStr(thisArg.type));
+	printf("%s %s,",typeToStr(thisArg.type),thisArg.name);
 	return OK;
 }
 int foreachArg(arg *head,int (* method)(arg thisArg))
@@ -162,9 +152,10 @@ func *cloneFunc(func *head)
 	func *tmpF;
 	arg *tmpA;
 	int err;
+	char *name;
 	clone=funcInit();
 	IF_NULL_RET_NULL(clone);
-	for(tmpF=clone;tmpF->next!=NULL;tmpF=tmpF->next)
+	for(tmpF=head;tmpF->next!=NULL;tmpF=tmpF->next)
 		{
 			tmpA=cloneArg(tmpF->next->args);
 			if(tmpA==NULL)
@@ -172,7 +163,14 @@ func *cloneFunc(func *head)
 					freeFunc(clone);
 					return NULL;
 				}
-			err=addFunc(clone,tmpF->retType,tmpF->name,tmpF->argNum,tmpA);
+			name=copyStr(tmpF->name);
+			if(name==NULL)
+				{
+					freeFunc(clone);
+					freeArg(tmpA);
+					return NULL;
+				}
+			err=addFunc(clone,tmpF->retType,name,tmpF->argNum,tmpA);
 			if(err!=OK)
 				{
 					freeFunc(clone);

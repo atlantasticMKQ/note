@@ -1,4 +1,4 @@
-#include<stdio.h>
+#define UNSET	-1
 #define FUNC	0
 #define INT	1
 #define BOOL	2
@@ -9,6 +9,8 @@ char *typeToStr(int type)
 {
 	switch(type)
 		{
+		case UNSET:
+			return "UNSET";
 		case FUNC:
 			return "FUNC";
 		case INT:
@@ -25,4 +27,3 @@ char *typeToStr(int type)
 			return "UNKNOWN";
 		}
 }
-				

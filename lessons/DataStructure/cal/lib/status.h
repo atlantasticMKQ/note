@@ -1,6 +1,4 @@
-//#include<stdio.h>
-#include"bool.h"
-#include"op.h"
+
 /*
  *status.h
  */

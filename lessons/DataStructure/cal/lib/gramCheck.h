@@ -1,10 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<editline.h>
-//#include"tools.h"
-//#include"types.h"
-#include"3-func.h"
 struct charStack
 {
 	char c;
@@ -106,7 +99,7 @@ int ifMatch(char c1,char c2)
 		return FALSE;
 	return TRUE;
 }
-#define IF_STACK_OF(stack) do{if(err==OF){printf("stack OF\n");csFree(stack);return OF;}}while(0)
+
 int bracCheck(char *str)
 {
 	cs *stack=csInit();
@@ -118,10 +111,10 @@ int bracCheck(char *str)
 			if(*c=='"')
 				{
 					ifStr=!ifStr;
-					printf("here is a \"\n");
+					//printf("here is a \"\n");
 					char tmp;
 					err=csPop(stack,&tmp);
-					printf("pop:%c \n",tmp);
+					//printf("pop:%c \n",tmp);
 					
 					if(err==POPEND)
 						return NAMEERR;
@@ -130,10 +123,10 @@ int bracCheck(char *str)
 										
 							
 							err=csPush(stack,tmp);
-							printf("push:%c\n",tmp);
+							//printf("push:%c\n",tmp);
 							IF_STACK_OF(stack);
 							err=csPush(stack,*c);
-							printf("push:%c\n",*c);
+							//printf("push:%c\n",*c);
 							IF_STACK_OF(stack);
 						}
 				
@@ -142,22 +135,22 @@ int bracCheck(char *str)
 							
 			if(ifLeft(*c)&&!ifStr)
 				{
-					printf("left brac '%c'\n",*c);
+					//printf("left brac '%c'\n",*c);
 					err=csPush(stack,*c);
-					printf("push:%c\n",*c);
+					//printf("push:%c\n",*c);
 					if(err==OF)
 						{
-							printf("stack OF\n");
+							//printf("stack OF\n");
 							csFree(stack);
 							return OF;
 						}
 				}
 			if(ifRight(*c)&&!ifStr)
 				{
-					printf("right brac '%c'\n",*c);
+					//printf("right brac '%c'\n",*c);
 					char poped;
 					err=csPop(stack,&poped);
-					printf("pop:%c \n",poped);
+					//printf("pop:%c \n",poped);
 					if(!ifMatch(poped,*c))
 						{
 							csFree(stack);
