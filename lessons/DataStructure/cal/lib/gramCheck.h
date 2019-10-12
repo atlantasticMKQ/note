@@ -181,7 +181,7 @@ int ifCharInLaw(char c)
 		return TRUE;
 	return FALSE;
 }
-int gramCheck(char *str)
+int bracCharCheck(char *str)
 {
 	if(!ifLeft(*str))
 		return MATCHERR;
@@ -196,5 +196,117 @@ int gramCheck(char *str)
 		{
 			return err;
 		}
+	return OK;
+}
+int gCheck(char *str)
+{
+	//printf("----enterPlantTree----\n");
+	char *ptr=str;
+	char *subPtr=str;
+	for(ptr=str;!ifLeft(*ptr);ptr++);
+	//printf("left:%c\n",*ptr);
+	for(;ifBlank(*ptr)||ifLeft(*ptr);ptr++);
+	subPtr=ptr;
+	int functag=0;
+	int err;
+	while(TRUE)
+		{
+			//printf(">loop\n");
+			if(ifLetter(*ptr))
+				{
+
+					for(subPtr=ptr;*subPtr!=' '&&!ifRight(*subPtr);subPtr++)
+						{
+							if(!ifLetter(*subPtr))
+								return NAMEERR;
+						}
+
+					if(functag==0)
+						{
+
+							functag=1;
+						}
+
+					for(;*subPtr==' ';subPtr++);
+					ptr=subPtr;
+					
+				}
+			else if(ifNum(*ptr)||*ptr=='-')
+				{
+
+					int point=0;
+					for(subPtr=ptr+1;*subPtr!=' '&&!ifRight(*subPtr);subPtr++)
+						{
+							if(*subPtr=='.'&&point==0)
+								point=1;
+							else if(*subPtr=='.'&&point==1)
+								return NUMERR;
+							if(!ifNum(*subPtr)&&*subPtr!='.')
+								return NUMERR;
+						}
+
+
+					if(functag!=1)
+						return NAMEERR;
+
+					for(;*subPtr==' ';subPtr++);
+					ptr=subPtr;
+				}
+			else if(ifLeft(*ptr))
+				{
+
+					if(functag!=1)
+						{
+							return ERR;
+						}
+
+					
+					if((err=gCheck(ptr))!=OK)
+						return err;
+					int brac=TRUE;
+					for(subPtr=ptr+1;!(ifRight(*subPtr)&&brac==1);subPtr++)
+						{
+							
+							if(ifRight(*subPtr))
+								brac--;
+							else if(ifLeft(*subPtr))
+								brac++;
+						}
+
+					subPtr++;
+					for(;*subPtr==' ';subPtr++);
+					ptr=subPtr;
+				}
+			else if(*ptr=='"')
+				{
+					if(functag!=1)
+						{
+							return ERR;
+						}
+					for(subPtr=ptr+1;*subPtr!='"';subPtr++);
+						
+					
+					
+					subPtr++;
+					for(;*subPtr==' ';subPtr++);
+					ptr=subPtr;
+				}
+			else if(ifRight(*ptr))
+				{
+					return OK;
+				}
+		}
+	
+	return OK;
+}
+int gramCheck(char *str)
+{
+	int err;
+	err=bracCharCheck(str);
+	if(err!=OK)
+		return err;
+	err=gCheck(str);
+	if(err!=OK)
+		return err;
 	return OK;
 }

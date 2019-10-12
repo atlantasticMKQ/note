@@ -1,5 +1,6 @@
-#define NAME_SIZE 32
+#define NAME_SIZE 64
 #define FUNC_NAME_SIZE NAME_SIZE
+#define STR_SIZE NAME_SIZE		
 char *readLen(char *ptr,int num)
 {
 	IF_NULL_RET_NULL(ptr);
@@ -25,19 +26,4 @@ char *copyStr(char *buffer)
 		}
 	return line;
 }
-#define IF_EQ(name) if(strcmp(str,#name)==0)
-int strToType(char *str)
-{
-	IF_EQ(UNSET)
-		return UNSET;
-	IF_EQ(FUNC)
-		return FUNC;
-	IF_EQ(INT)
-		return INT;
-	IF_EQ(BOOL)
-		return BOOL;
-	IF_EQ(POLY)
-		return POLY;
-	IF_EQ(STR)
-		return STR;
-}
+

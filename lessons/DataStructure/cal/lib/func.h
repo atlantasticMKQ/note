@@ -12,6 +12,7 @@ struct funcNode
 	int retType;
 	char *name;
 	int argNum;
+	tree *eval;
 
 	struct funcNode *next;
 	struct argNode *args;
@@ -39,7 +40,14 @@ int addArg(arg *head,int type,char *name)
 	tail->next=NULL;
 	tail->type=type;
 	tail->index=index;
-	tail->name=name;
+	tail->name=MALLOC_NUM(char,FUNC_NAME_SIZE);
+	if(tail->name==NULL)
+		{
+			free(tail->next);
+			tail->next=NULL;
+			return OF;
+		}
+	strcpy(tail->name,name);
 	return OK;
 }
 int *freeArg(arg *head)
@@ -48,7 +56,7 @@ int *freeArg(arg *head)
 		{
 			return OK;
 		}
-	freeArg(head->next);
+    	freeArg(head->next);
 	free(head->name);
 	free(head);
 	return OK;
@@ -62,10 +70,7 @@ arg *cloneArg(arg *head)
 	char *name;
 	for(tmp=head;tmp->next!=NULL;tmp=tmp->next)
 	{
-		name=copyStr(tmp->name);
-		if(tmp!=head&&name==NULL)
-			return NULL;
-		err=addArg(clone,tmp->type,name);
+		err=addArg(clone,tmp->type,tmp->name);
 		if(err!=OK)
 		{
 			freeArg(clone);
@@ -75,16 +80,16 @@ arg *cloneArg(arg *head)
 	return clone;
 }
 
-int printArg(arg thisArg)
+int printArg(arg *thisArg)
 {
-	printf("%s %s,",typeToStr(thisArg.type),thisArg.name);
+	printf("(%s %s)",typeToStr(thisArg->type),thisArg->name);
 	return OK;
 }
-int foreachArg(arg *head,int (* method)(arg thisArg))
+int foreachArg(arg *head,int (* method)(arg *thisArg))
 {
 	for(arg *tmp=head;tmp->next!=NULL;tmp=tmp->next)
 	{
-		method(*(tmp->next));
+		method(tmp->next);
 	}
 	return OK;
 }
@@ -98,9 +103,10 @@ func *funcInit()
 	head->argNum=0;
 	head->next=NULL;
 	head->args=NULL;
+	head->eval=NULL;
 	return head;
 }
-int addFunc(func *head,int retType,char *name,int argNum,arg *argHead)
+int addFunc(func *head,int retType,char *name,int argNum,arg *argHead,tree *eval)
 {
 	func *tail;
 	TOTAIL(head,tail);
@@ -109,30 +115,32 @@ int addFunc(func *head,int retType,char *name,int argNum,arg *argHead)
 	IF_NULL_RET_OF(tail->next);
 	tail->next->retType=retType;
 	tail->next->name=MALLOC_NUM(char,FUNC_NAME_SIZE);
-	if(tail->next->name==NULL)
-		{
-			free(tail->next);
-			tail->next=NULL;
-			return OF;
-		}
+	IF_NULL_DO_RET_OF(tail->next->name,do{free(tail->next);tail->next=NULL;}while(0));
+
 	strcpy(tail->next->name,name);
 	tail->next->argNum=argNum;
 	tail->next->args=argHead;
+	tail->next->eval=eval;
 	tail->next->next=NULL;
 	return OK;
 }
-int printFunc(func thisFunc)
+int printFunc(func *thisFunc)
 {
-	printf("%s %s(",typeToStr(thisFunc.retType),thisFunc.name);
-	foreachArg(thisFunc.args,printArg);
-	printf(")\n");
+	printf("(%s) %s(",typeToStr(thisFunc->retType),thisFunc->name);
+	foreachArg(thisFunc->args,printArg);
+	printf(")");
+	
+	if(thisFunc->eval==NULL)
+		printf("(inside)\n");
+	else
+		printf("\n");
 	return OK;
 }
-int foreachFunc(func *head,int (*method)(func func))
+int foreachFunc(func *head,int (*method)(func *func))
 {
 	for(func *tmp=head;tmp->next!=NULL;tmp=tmp->next)
 	{
-		method(*(tmp->next));
+		method(tmp->next);
 	}
 	return OK;
 }
@@ -143,6 +151,7 @@ int freeFunc(func *head)
 	freeFunc(head->next);
 	freeArg(head->args);
 	free(head->name);
+	freeTree(head->eval);
 	free(head);
 	return OK;
 }
@@ -152,7 +161,7 @@ func *cloneFunc(func *head)
 	func *tmpF;
 	arg *tmpA;
 	int err;
-	char *name;
+	tree *eval;
 	clone=funcInit();
 	IF_NULL_RET_NULL(clone);
 	for(tmpF=head;tmpF->next!=NULL;tmpF=tmpF->next)
@@ -163,14 +172,15 @@ func *cloneFunc(func *head)
 					freeFunc(clone);
 					return NULL;
 				}
-			name=copyStr(tmpF->name);
-			if(name==NULL)
+			
+			err=copyTree(tmpF->eval,&eval);
+			if(err!=OK)
 				{
 					freeFunc(clone);
 					freeArg(tmpA);
 					return NULL;
 				}
-			err=addFunc(clone,tmpF->retType,name,tmpF->argNum,tmpA);
+			err=addFunc(clone,tmpF->retType,tmpF->name,tmpF->argNum,tmpA,eval);
 			if(err!=OK)
 				{
 					freeFunc(clone);
