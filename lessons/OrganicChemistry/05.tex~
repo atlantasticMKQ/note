@@ -1,4 +1,4 @@
-% Created 2019-09-27 五 08:19
+% Created 2019-09-27 五 08:57
 % Intended LaTeX compiler: xelatex
 \documentclass[11pt]{article}
 \usepackage{graphicx}
@@ -29,9 +29,9 @@
 \tableofcontents
 
 \section{立体化学}
-\label{sec:org1037f23}
+\label{sec:org5b7258a}
 \subsection{异构体分类}
-\label{sec:org597abd3}
+\label{sec:org2fb372d}
 \begin{cases}
 \mbox{构造异构}
 
@@ -52,13 +52,13 @@
 	\end{cases}
 \end{cases}
 \subsection{构造异构}
-\label{sec:org40dd339}
+\label{sec:org0e19e58}
 相同分子式但是原子排列不同
 \subsection{立体异构}
-\label{sec:org22be7f2}
+\label{sec:org589eedb}
 相同分子式,相同原子连接方式,不同空间排列
 \subsection{手性,手性分子}
-\label{sec:org436b7e6}
+\label{sec:org89bf963}
 实物和镜像不能重合
 有手性的分子就是手性分子
 \begin{itemize}
@@ -67,9 +67,121 @@
 \item 能使平面偏振光偏转:旋光性,光学活性
 \end{itemize}
 \subsubsection{外消旋体}
-\label{sec:org65a8534}
+\label{sec:orgb5ba53e}
 等量旋光异构体混合在一起
 \[
 \%e.e=\frac{[R]-[S]}{[R]+[S]} =\%R -\%S
 \]
+\begin{itemize}
+\item $\backslash$%e.e就是对映体过量
+\end{itemize}
+\subsubsection{分子对称因素}
+\label{sec:orgc31548a}
+\begin{itemize}
+\item 对称面
+\item 对称中心
+\item 对称轴
+\item 四重反轴
+\end{itemize}
+只有对称轴的话是手性的
+\subsection{含有手性碳分子的立体化学}
+\label{sec:org2a2f882}
+\subsubsection{一个手性碳}
+\label{sec:orgddb2d63}
+\begin{itemize}
+\item 手性碳:和四个不同基团连接的碳
+\item 常用(*)标注
+\item 手性中心:集团围绕这一点不对称排列
+\item 手性碳和其他原子都可以是手性中心
+\end{itemize}
+\subsubsection{对映体}
+\label{sec:orgd7236d8}
+\begin{itemize}
+\item 含有一个手性碳的分子是手性分子,有一对对映体
+\item 使平面偏振光左偏:左旋体(-)
+\item 反之右旋体(+)
+\item 二者旋光度相同,方向相反
+\end{itemize}
+\subsubsection{Fischer投影式}
+\label{sec:org034d6a2}
+\subsubsection{D-L构型}
+\label{sec:orgc31a695}
+\begin{itemize}
+\item 羟基在右边:D
+\item 羟基在左边:L
+\item 醛基在上
+\end{itemize}
+\subsubsection{R-S构型}
+\label{sec:org6d9aca2}
+\subsubsection{潜不对称碳原子}
+\label{sec:org04f987e}
+\begin{itemize}
+\item 被一个集团取代后失去对称性
+\end{itemize}
+\subsection{含有多个手性碳分子}
+\label{sec:org46b2358}
+\subsubsection{非对映体}
+\label{sec:orgf5e8eec}
+不成镜像关系的旋光异构体
+\subsubsection{赤/苏式}
+\label{sec:org4d4c56b}
+\begin{itemize}
+\item 赤式:两个氢在同侧
+\item 苏式:两个氢在异侧
+\end{itemize}
+\subsubsection{差向异构体}
+\label{sec:org83f76f1}
+只有一个手性碳构型不同
+\begin{itemize}
+\item 在端基时是端基差向异构体
+\end{itemize}
+
+\subsubsection{内消旋体}
+\label{sec:org2dfc7c8}
+分子内部形成对映两半的化合物
+有对称面
+\begin{itemize}
+\item 没有旋光性
+\end{itemize}
+\subsubsection{假不对称碳原子}
+\label{sec:orgca55728}
+一个碳原子A如果和两个相同的手性碳原子相连而且构型相同时,就是对称碳原子
+否则是假不对称碳原子
+\begin{itemize}
+\item R>S
+\item 顺>反
+\item 用r/s表示
+\end{itemize}
+\subsection{环状化合物的立体异构}
+\label{sec:org57cb90c}
+必须用R/S
+\begin{itemize}
+\item 反-1,2-二甲基环己烷有手性
+\end{itemize}
+所以要写RS
+\begin{itemize}
+\item 通常用平面来考虑,和考虑立体构型一样的
+\end{itemize}
+\subsection{其他光活性的分子}
+\label{sec:org0548c9e}
+季铵盐
+\begin{itemize}
+\item 三级胺也是四面体,但变化太快,但硫磷就比较慢
+\item 可以用桥基固定
+\end{itemize}
+\subsection{不含手性原子的光活性异构体}
+\label{sec:orgf9bfec0}
+\begin{itemize}
+\item 丙二烯型
+\item 螺环类似物
+\item 联苯
+\item 联萘
+\item 把手型
+\item 骈苯
+\end{itemize}
+\subsection{化学性质}
+\label{sec:org5d66cf3}
+
+和旋光化合物反应时会有影响
+(尤其是生物体内)
 \end{document}

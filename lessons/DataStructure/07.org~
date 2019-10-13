@@ -1,0 +1,38 @@
+#+TITLE: 天知道今天讲的是啥我标题该是啥
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* 栈和队列
+** 队列(Queue)
+*** 队列的定义
+在表尾插入在表尾删除,是一种特殊的线性表
+- 特点:先进先出(FIFO)
+*** 抽象数据类型定义
+#+BEGIN_SRC
+ADT QUEUE{
+D={a|a\in ElemSet,i=1,2,...n,n>=o}
+R{<a_{i-1},a_i>|a_i \in D,i=2,...,n}
+
+InitQueue(&Q)
+DestroyQueue(&Q)
+ClearQueue(&Q)
+QueueEmpty(Q)
+QueueLength(Q)
+GetHead(Q,&a)
+EnQueue(Q,a)
+DeQueue(Q,&a)
+}ADT Queue
+#+END_SRC
+*** 链队列
+整两个指针,一个指向头,一个指向尾
+*** 循环队列
+循环链表,只留一个指针指向头部
+**** 顺序结构实现
+日哦,这个逊爆了
+大致就是留一个指针指着下一个空位,一个指着头,然后假上溢时,
+- 整体左移
+- 把尾指针指向数组头
+**** 队满条件
+- 如果尾指针和头指针差一个,那就满了,这样牺牲了一个储存节点
+- 如果相等的话,那么是队列空的意思

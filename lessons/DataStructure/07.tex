@@ -1,0 +1,80 @@
+% Created 2019-10-08 二 14:25
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{天知道今天讲的是啥我标题该是啥}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={天知道今天讲的是啥我标题该是啥},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{栈和队列}
+\label{sec:org9acebd3}
+\subsection{队列(Queue)}
+\label{sec:org0b4edd7}
+\subsubsection{队列的定义}
+\label{sec:orgd26df6a}
+在表尾插入在表尾删除,是一种特殊的线性表
+\begin{itemize}
+\item 特点:先进先出(FIFO)
+\end{itemize}
+\subsubsection{抽象数据类型定义}
+\label{sec:org0f394e4}
+\begin{verbatim}
+ADT QUEUE{
+D={a|a\in ElemSet,i=1,2,...n,n>=o}
+R{<a_{i-1},a_i>|a_i \in D,i=2,...,n}
+
+InitQueue(&Q)
+DestroyQueue(&Q)
+ClearQueue(&Q)
+QueueEmpty(Q)
+QueueLength(Q)
+GetHead(Q,&a)
+EnQueue(Q,a)
+DeQueue(Q,&a)
+}ADT Queue
+\end{verbatim}
+\subsubsection{链队列}
+\label{sec:org20d6844}
+整两个指针,一个指向头,一个指向尾
+\subsubsection{循环队列}
+\label{sec:org6f06aad}
+循环链表,只留一个指针指向头部
+\begin{enumerate}
+\item 顺序结构实现
+\label{sec:orgecbf1d1}
+日哦,这个逊爆了
+大致就是留一个指针指着下一个空位,一个指着头,然后假上溢时,
+\begin{itemize}
+\item 整体左移
+\item 把尾指针指向数组头
+\end{itemize}
+\item 队满条件
+\label{sec:orgd34a421}
+\begin{itemize}
+\item 如果尾指针和头指针差一个,那就满了,这样牺牲了一个储存节点
+\item 如果相等的话,那么是队列空的意思
+\end{itemize}
+\end{enumerate}
+\end{document}
