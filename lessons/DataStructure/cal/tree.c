@@ -22,6 +22,31 @@
 		
 
 
+int mirrorSetup(tree *mirror,struct funcNode *f,tree *root)
+{
+	int err;
+	tree *newMirror;
+	for(newMirror=mirror->right;newMirror!=NULL;newMirror=newMirror->right)
+		{
+			if(newMirror->left->type==UNSET&&newMirror->left->state==EVAL)
+				mirrorSetup(newMirror->left,f,root);
+			if(newMirror->left->state==ELEM)
+				{
+					for(struct argNode *a=f->args->next;a!=NULL;a=a->next)
+						{
+							if(strcmp(a->name,newMirror->left->elem)==0)
+								{
+									tree *node=root;
+									for(int i=0;i<a->index;node=node->right)
+										i++;
+									err=setTree(newMirror->left,node->left->elem,node->left->type,node->left->state);
+									IF_NOT_OK_RET(err);
+								}
+						}
+				}
+		}
+	return OK;
+}
 
 int eval(tree *root,func *fhead,elem *ehead)
 {
@@ -120,7 +145,9 @@ int eval(tree *root,func *fhead,elem *ehead)
 			tree *eval;
 			err=copyTree(root->right->right->right->left,&eval);
 			IF_NOT_OK_DO_RET(err,freeArg(argHead));
-			err=addFunc(fhead,UNSET,root->right->left->elem,0,argHead,eval);
+			struct argNode *argTail;
+			TOTAIL(argHead,argTail);
+			err=addFunc(fhead,UNSET,root->right->left->elem,argTail->index,argHead,eval);
 			IF_NOT_OK_DO_RET(err,freeArg(argHead));
 
 			err=setTree(root,"TRUE",BOOL,ELEM);
@@ -1733,11 +1760,18 @@ int eval(tree *root,func *fhead,elem *ehead)
 	func *f=findFunc(fhead,root->left->elem);
 	if(f==NULL)
 		return FUNCNAMEERR;
-	printf("argNum:%i\n",f->argNum);
-
+	if(f->argNum!=argNum(root))
+		return ARGNUMERR;
+	tree *mirror;
+	err=copyTree(f->eval,&mirror);
+	IF_NOT_OK_RET(err);
+	err=mirrorSetup(mirror,f,root);
+	IF_NOT_OK_RET(err);
+	printf("mirror setup\n");
+	err=eval(mirror,fhead,ehead);
+	IF_NOT_OK_RET(err);
 	return OK;
 }
-	
 int loadFile(char *path,func *fhead,elem *ehead)
 {
 	FILE *fp;
