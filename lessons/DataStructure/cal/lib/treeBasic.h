@@ -51,7 +51,6 @@ int treeAddL(tree *root,int type,int state,char *elem)
 	root->left=left;
 	left->left=NULL;
 	left->right=NULL;
-       	//printf("treeAdd->\ntype:%s\nstate:%s\nelem:%s\n<<<<\n",typeToStr(type),stateToStr(state),elem);
 	return OK;
 }
 int treeAddR(tree *root,int type,int state,char *elem)
@@ -89,6 +88,20 @@ int freeTree(tree *root)
 			return OK;
 		}
 }
+int setTree(tree *node,char *elem,int type,int state)
+{
+	if(elem!=NULL)
+		{
+			node->elem=copyStr(elem);
+			IF_NULL_RET_OF(node->elem);
+		}
+	else
+		node->elem=NULL;
+	node->type=type;
+	node->state=state;
+	return OK;
+}
+
 int copyTree(tree *root,tree **copyPtr)
 {
 	tree *copy;
@@ -96,7 +109,6 @@ int copyTree(tree *root,tree **copyPtr)
 	tree *right;
 	if(root==NULL)
 		{
-			printf("(null)\n");
 			*copyPtr=NULL;
 			return OK;
 		}
@@ -104,20 +116,54 @@ int copyTree(tree *root,tree **copyPtr)
 	IF_NOT_OK_RET(err);
 	err=copyTree(root->right,&right);	
 	IF_NOT_OK_RET(err);
-	copy=MALLOC(tree);
+	copy=treeInit();
 	IF_NULL_DO_RET_OF(copy,do{freeTree(left);freeTree(right);}while(0));
-	
-	copy->type=root->type;
-	copy->state=root->state;
-	char *copyElem=copyStr(root->elem);
-	if(copyElem==NULL&&root->elem!=NULL)
-		{
-			freeTree(left);
-			freeTree(right);
-			free(copy);
-			return OF;
-		}
-	copy->elem=copyElem;
+	err=setTree(copy,root->elem,root->type,root->state);
+	IF_NOT_OK_RET(err);
+	copy->right=right;
+	copy->left=left;
 	*copyPtr=copy;
+	return OK;
+}
+int argNum(tree *root)
+{
+	if(root==NULL)
+		return -1;
+	int i=0;
+	for(tree *tmp=root;tmp->right!=NULL&&tmp->right->left!=NULL;tmp=tmp->right)
+		i++;
+
+	return i;
+}
+			
+int argCheck(tree *root,int num)
+{
+	int i=argNum(root);
+	if(i==num)
+		return OK;
+	else
+		return ARGNUMERR;
+}
+int argTypeCheck(tree *root,int index,int type,int state)
+{
+	int num=argNum(root);
+	if(num<index)
+		return ARGNUMERR;
+
+	tree *node=root;
+	for(int i=0;i<index;i++)
+		{
+			node=node->right;
+		}
+	node=node->left;
+	if(node->type!=type||node->state!=state)
+		return ARGTYPEERR;
+	return OK;
+}
+			
+int printTree(tree *root)
+{
+	for(tree *tmp=root;tmp!=NULL;tmp=tmp->right)
+		printf("node:%i,%i,%s\n",tmp->left->type,tmp->left->state,tmp->left->elem);
 	return OK;
 }

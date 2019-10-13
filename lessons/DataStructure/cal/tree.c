@@ -15,224 +15,20 @@
 #include"lib/treeBasic.h"
 #include"lib/func.h"
 #include"lib/gramCheck.h"
-
+#include"lib/plantTree.h"
 
 #define EXIT	100
 	
 		
 
 
-int plantTree(tree *root,char *str,elem *head)
-{
-	//ptr point to string's head subptr go follow chars
-	char *ptr=str;
-	char *subPtr=str;
-
-	//ptr point to (
-	for(ptr=str;!ifLeft(*ptr);ptr++);
-
-	//ptr point to first letter after (
-	for(;ifBlank(*ptr)||ifLeft(*ptr);ptr++);
-	subPtr=ptr;
-
-	//root->left is func node there must be a func and rights are elems
-	int functag=0;
-	int err;
-	while(TRUE)
-		{
-			//name
-			if(ifLetter(*ptr))
-				{
-
-					for(subPtr=ptr;*subPtr!=' '&&!ifRight(*subPtr);subPtr++)
-						{
-							//only letters are allowed in func/elem name
-							if(!ifLetter(*subPtr))
-								return NAMEERR;
-						}
-					//save the name
-					char *name=readLen(ptr,subPtr-ptr);
-					IF_NULL_DO_RET_OF(name,freeTree(root));
-
-					//creat func node
-					if(functag==0)
-						{
-							err=treeAddL(root,FUNC,FUNC,name);
-							IF_NOT_OK_DO_RET(err,freeTree(root));
-							functag=1;
-						}
-					else
-						{
-							//elem *elem=findElem(head,name);
-							int type;
-							
-							//if the elem was quote
-							//if(elem==NULL)
-							type=UNSET;
-							//else
-							//type=elem->type;
-							
-							err=treeAddR(root,type,ELEM,name);
-							IF_NOT_OK_DO_RET(err,freeTree(root));
-						}
-					//move ptr and sub ptr to next noblank char 
-					for(;*subPtr==' ';subPtr++);
-					ptr=subPtr;
-					
-				}
-			//number
-			else if(ifNum(*ptr)||*ptr=='-')
-				{
-					//point tag num without point is int ,else float
-					int point=0;
-					
-					//check if num in law
-					for(subPtr=ptr+1;*subPtr!=' '&&!ifRight(*subPtr);subPtr++)
-						{
-							if(*subPtr=='.'&&point==0)
-								point=1;
-							else if(*subPtr=='.'&&point==1)
-								return NUMERR;
-							if(!ifNum(*subPtr)&&*subPtr!='.')
-								return NUMERR;
-						}
-					char *num=readLen(ptr,subPtr-ptr);
-					IF_NULL_DO_RET_OF(num,freeTree(root));
-
-					//this is a func!?
-					if(functag!=1)
-						return FUNCNAMEERR;
-					
-					int type;
-					if(point==0)
-						type=INT;
-					else if(point==1)
-						type=FLOAT;
-					
-					err=treeAddR(root,type,ELEM,num);
-					IF_NOT_OK_DO_RET(err,freeTree(root));
-
-					//same to above
-					for(;*subPtr==' ';subPtr++);
-					ptr=subPtr;
-				}
-			//state
-			else if(ifLeft(*ptr))
-				{
-
-					if(functag!=1)
-						{
-							return FUNCNAMEERR;
-						}
-					tree *newRoot;
-					err=treeAddR(root,UNSET,EVAL,NULL);
-					IF_NOT_OK_DO_RET(err,freeTree(root));
-
-					//move to the node added
-					for(newRoot=root;newRoot->right!=NULL;newRoot=newRoot->right);
-					newRoot=newRoot->left;
-					
-					err=plantTree(newRoot,ptr,head);
-					IF_NOT_OK_DO_RET(err,freeTree(root));
-					//go to the brac end
-					int brac=1;
-					for(subPtr=ptr+1;!(ifRight(*subPtr)&&brac==1);subPtr++)
-						{
-							
-							if(ifRight(*subPtr))
-								brac--;
-							else if(ifLeft(*subPtr))
-								brac++;
-						}
-
-					subPtr++;
-					for(;*subPtr==' ';subPtr++);
-					ptr=subPtr;
-				}
-			//string
-			else if(*ptr=='"')
-				{
-					//func name cant be string
-					if(functag!=1)
-						{
-							return FUNCNAMEERR;
-						}
-					//subptr mark the position of next "
-					for(subPtr=ptr+1;*subPtr!='"';subPtr++);
-						
-					char *str=readLen(ptr+1,subPtr-ptr-1);
-					IF_NULL_DO_RET_OF(str,freeTree(root));
-
-					err=treeAddL(root,STR,ELEM,str);
-					IF_NOT_OK_DO_RET(err,freeTree(root));
-
-					subPtr++;
-					for(;*subPtr==' ';subPtr++);
-					ptr=subPtr;
-				}
-			//)
-			else if(ifRight(*ptr))
-				{
-					return OK;
-				}
-		}
-	
-	return OK;
-}
-int argNum(tree *root)
-{
-	if(root==NULL)
-		return -1;
-	int i=0;
-	for(tree *tmp=root;tmp->right!=NULL&&tmp->right->left!=NULL;tmp=tmp->right)
-		i++;
-
-	return i;
-}
-			
-int argCheck(tree *root,int num)
-{
-	int i=argNum(root);
-	if(i==num)
-		return OK;
-	else
-		return ARGNUMERR;
-}
-int argTypeCheck(tree *root,int index,int type,int state)
-{
-	int num=argNum(root);
-	if(num<index)
-		return ARGNUMERR;
-
-	tree *node=root;
-	for(int i=0;i<index;i++)
-		{
-			node=node->right;
-		}
-	node=node->left;
-	if(node->type!=type||node->state!=state)
-		return ARGTYPEERR;
-	return OK;
-}
-			
-int setTree(tree *node,char *elem,int type,int state)
-{
-	if(elem!=NULL)
-		{
-			node->elem=copyStr(elem);
-			IF_NULL_RET_OF(node->elem);
-		}
-	else
-		node->elem=NULL;
-	node->type=type;
-	node->state=state;
-	return OK;
-}
 
 int eval(tree *root,func *fhead,elem *ehead)
 {
 	int err=OK;
+
 	err=argTypeCheck(root,0,FUNC,FUNC);
+
 	IF_NOT_OK_RET(err);
 
 	//(defIn foo (arg INT mkq INT a INT b ...))
@@ -338,8 +134,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 			err=argCheck(root,1);
 			IF_NOT_OK_RET(err);
 			err=argTypeCheck(root,1,UNSET,ELEM);
-			IF_NOT_OK_RET(err);
-			
+			IF_NOT_OK_RET(err);		
 			char *path;			
 			path=copyStr("./help/");
 			IF_NULL_RET_OF(path);
@@ -388,15 +183,138 @@ int eval(tree *root,func *fhead,elem *ehead)
 		{
 			return EXIT;
 		}
-	IFFUNC(root,if)
+	IFFUNC(root,for)
 		{
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			err=argTypeCheck(root,2,UNSET,EVAL);
+			IF_NOT_OK_RET(err);
+			tree *evalBack,*tmp;
+			err=copyTree(root->right,&evalBack);
+			IF_NOT_OK_RET(err);
+			while(TRUE)
+				{
+					freeTree(root->right);
+					err=copyTree(evalBack,&tmp);
+					root->right=tmp;
+					IF_NOT_OK_RET(err);
+					//eval arg 1
+					if(argTypeCheck(root,1,UNSET,EVAL)==OK)
+						{
+							err=eval(root->right->left,fhead,ehead);
+							IF_NOT_OK_RET(err);
+						}
+					if(argTypeCheck(root,1,BOOL,ELEM)==OK)
+						{
+							if(strcmp(root->right->left->elem,"TRUE")==0)
+								{
+									err=eval(root->right->right->left,fhead,ehead);
+									IF_NOT_OK_DO_RET(err,freeTree(evalBack));
+									continue;
+								}
+							else
+								break;
+						}
+					else if(argTypeCheck(root,1,UNSET,ELEM)==OK)
+						{
+							elem *e=findElem(ehead,root->right->left->elem);
+							if(e==NULL)
+								{
+									freeTree(evalBack);
+									return ELEMNOTFOUND;
+								}
+							if(e->type!=BOOL)
+								{
+									freeTree(evalBack);
+									return ARGTYPEERR;
+								}
+							if(e->bool==TRUE)
+								{
+									err=eval(root->right->right->left,fhead,ehead);
+									IF_NOT_OK_DO_RET(err,freeTree(evalBack));
+									continue;
+								}
+							else
+								break;
+						}
+					else
+						return ARGTYPEERR;
+
+					
+				}
+			freeTree(evalBack);
+			err=setTree(root,"TRUE",BOOL,ELEM);
+			IF_NOT_OK_RET(err);
 			return OK;
 		}
-	printf("func:%s\n",root->left->elem);
+
+	IFFUNC(root,if)
+		{
+			err=argCheck(root,3);
+			IF_NOT_OK_RET(err);
+			err=argTypeCheck(root,2,UNSET,EVAL);
+			IF_NOT_OK_RET(err);
+			err=argTypeCheck(root,3,UNSET,EVAL);
+			IF_NOT_OK_RET(err);
+			if(argTypeCheck(root,1,UNSET,EVAL)==OK)
+				{
+					err=eval(root->right->left,fhead,ehead);
+					IF_NOT_OK_RET(err);
+				}
+			if(argTypeCheck(root,1,BOOL,ELEM)==OK)
+				{
+					if(strcmp(root->right->left->elem,"TRUE")==0)
+						{
+							err=eval(root->right->right->left,fhead,ehead);
+							IF_NOT_OK_RET(err);
+							err=setTree(root,root->right->right->left->elem,root->right->right->left->type,root->right->right->left->state);
+							IF_NOT_OK_RET(err);
+							return OK;
+						}
+					else
+						{
+							err=eval(root->right->right->right->left,fhead,ehead);
+							IF_NOT_OK_RET(err);
+							err=setTree(root,root->right->right->right->left->elem,root->right->right->right->left->type,root->right->right->right->left->state);
+							IF_NOT_OK_RET(err);
+							return OK;
+						}
+				}
+			if(argTypeCheck(root,1,UNSET,ELEM)==OK)
+				{
+					elem *e=findElem(ehead,root->right->left->elem);
+					if(e==NULL)
+						return ELEMNOTFOUND;
+					if(e->type!=BOOL)
+						{
+							return ARGTYPEERR;
+						}
+					if(e->bool==TRUE)
+						{
+							err=eval(root->right->right->left,fhead,ehead);
+							IF_NOT_OK_RET(err);
+							err=setTree(root,root->right->right->left->elem,root->right->right->left->type,root->right->right->left->state);
+							IF_NOT_OK_RET(err);
+							return OK;
+						}
+					else
+						{
+							err=eval(root->right->right->right->left,fhead,ehead);
+							IF_NOT_OK_RET(err);
+							err=setTree(root,root->right->right->right->left->elem,root->right->right->right->left->type,root->right->right->right->left->state);
+							IF_NOT_OK_RET(err);
+							return OK;
+						}
+				}
+			else
+				return argTypeCheck(root,1,UNSET,ELEM);
+			err=setTree(root,"TRUE",BOOL,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
 	//eval args
 	for(tree *tmp=root->right;tmp!=NULL;tmp=tmp->right)
 		{
-			printf("%s:\n",tmp->left->elem);
 			if(tmp->left==NULL)
 				{
 					return ERR;
@@ -410,19 +328,324 @@ int eval(tree *root,func *fhead,elem *ehead)
 			else if(tmp->left->state!=ELEM)
 				return ERR;
 		}
-	printf("func:%s\n",root->left->elem);
-	//quote (quote mkq 1.121)
-	printf("type:%i\n",root->right->left->type);
-	IFFUNC(root,quote)
+	IFFUNC(root,print)
 		{
-
+			int aNum=argNum(root);
+			tree *tmp=root->right;
+			for(int i=0;i<aNum;i++)
+				{
+					if(argTypeCheck(root,i+1,UNSET,ELEM)==OK)
+						{
+							elem *e=findElem(ehead,tmp->left->elem);
+							if(e==NULL)
+								{
+									printf("(null)");
+								}
+							else
+								{
+									switch(e->type)
+										{
+										case INT:
+											printf("%i",e->num);
+											break;
+										case FLOAT:
+											printf("%lf",e->val);
+											break;
+										case BOOL:
+											printf("%s",boolToStr(e->bool));
+											break;
+										case STR:
+											printf("%s",e->str);
+											break;
+										}
+								}
+						}
+					else 
+						{
+							printf("%s",tmp->left->elem);
+									
+						}
+					tmp=tmp->right;
+				}
+			err=setTree(root,"TRUE",BOOL,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,br)
+		{
+			err=argCheck(root,0);
+			IF_NOT_OK_RET(err);
+			printf("\n");
+			err=setTree(root,"TRUE",BOOL,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,multi)
+		{
+			int aNum=argNum(root);
+			if(aNum==0)
+				return ARGNUMERR;
+			tree *ret=root;
+			for(int i=0;i<aNum;i++)
+				ret=ret->right;
+			ret=ret->left;
+			
+			err=setTree(root,ret->elem,ret->type,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,and)
+		{
+			int bool1,bool2;
+			elem *e1,*e2;
 			err=argCheck(root,2);
 			IF_NOT_OK_RET(err);
-
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=BOOL)
+						return ELEMTYPEERR;
+					bool1=e1->bool;
+				}
+			else if(argTypeCheck(root,1,BOOL,ELEM)==OK)
+				{
+					if(strcmp(root->right->left->elem,"TRUE")==0)
+						bool1=TRUE;
+					else
+						bool1=FALSE;
+				}
+			else
+				return argTypeCheck(root,1,BOOL,ELEM);
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=BOOL)
+						return ELEMTYPEERR;
+					bool2=e2->bool;
+				}
+			else if(argTypeCheck(root,2,BOOL,ELEM)==OK)
+				{
+					if(strcmp(root->right->right->left->elem,"TRUE")==0)
+						bool2=TRUE;
+					else
+						bool2=FALSE;
+				}
+			else
+				return argTypeCheck(root,2,BOOL,ELEM);
+			if(bool1&&bool2==TRUE)
+				{
+					err=setTree(root,"TRUE",BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else
+				{
+					err=setTree(root,"FALSE",BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+		}
+	IFFUNC(root,or)
+		{
+			int bool1,bool2;
+			elem *e1,*e2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=BOOL)
+						return ELEMTYPEERR;
+					bool1=e1->bool;
+				}
+			else if(argTypeCheck(root,1,BOOL,ELEM)==OK)
+				{
+					if(strcmp(root->right->left->elem,"TRUE")==0)
+						bool1=TRUE;
+					else
+						bool1=FALSE;
+				}
+			else
+				return argTypeCheck(root,1,BOOL,ELEM);
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=BOOL)
+						return ELEMTYPEERR;
+					bool2=e2->bool;
+				}
+			else if(argTypeCheck(root,2,BOOL,ELEM)==OK)
+				{
+					if(strcmp(root->right->right->left->elem,"TRUE")==0)
+						bool2=TRUE;
+					else
+						bool2=FALSE;
+				}
+			else
+				return argTypeCheck(root,2,BOOL,ELEM);
+			if(bool1||bool2==TRUE)
+				{
+					err=setTree(root,"TRUE",BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else
+				{
+					err=setTree(root,"FALSE",BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+		}
+	IFFUNC(root,xor)
+		{
+			int bool1,bool2;
+			elem *e1,*e2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=BOOL)
+						return ELEMTYPEERR;
+					bool1=e1->bool;
+				}
+			else if(argTypeCheck(root,1,BOOL,ELEM)==OK)
+				{
+					if(strcmp(root->right->left->elem,"TRUE")==0)
+						bool1=TRUE;
+					else
+						bool1=FALSE;
+				}
+			else
+				return argTypeCheck(root,1,BOOL,ELEM);
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=BOOL)
+						return ELEMTYPEERR;
+					bool2=e2->bool;
+				}
+			else if(argTypeCheck(root,2,BOOL,ELEM)==OK)
+				{
+					if(strcmp(root->right->right->left->elem,"TRUE")==0)
+						bool2=TRUE;
+					else
+						bool2=FALSE;
+				}
+			else
+				return argTypeCheck(root,2,BOOL,ELEM);
+			if(bool1!=bool2)
+				{
+					err=setTree(root,"TRUE",BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else
+				{
+					err=setTree(root,"FALSE",BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+		}
+	IFFUNC(root,not)
+		{
+			int bool;
+			elem *e;
+			err=argCheck(root,1);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e=findElem(ehead,root->right->left->elem);
+					if(e==NULL)
+						return ELEMNOTFOUND;
+					if(e->type!=BOOL)
+						return ELEMTYPEERR;
+					bool=e->bool;
+				}
+			else if(argTypeCheck(root,1,BOOL,ELEM)==OK)
+				{
+					if(strcmp(root->right->left->elem,"TRUE")==0)
+						bool=TRUE;
+					else
+						bool=FALSE;
+				}
+			else
+				return argTypeCheck(root,1,BOOL,ELEM);
+			if(!bool==TRUE)
+				{
+					err=setTree(root,"TRUE",BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else
+				{
+					err=setTree(root,"FALSE",BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+		}
+	
+	IFFUNC(root,true)
+		{
+			err=argCheck(root,0);
+			IF_NOT_OK_RET(err);
+			err=setTree(root,"TRUE",BOOL,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,false)
+		{
+			err=argCheck(root,0);
+			IF_NOT_OK_RET(err);
+			err=setTree(root,"FLASE",BOOL,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,let)
+		{
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
 			err=argTypeCheck(root,1,UNSET,ELEM);
 			IF_NOT_OK_RET(err);
-			elem *e=findElem(ehead,root->right->left->elem);
-			printf("2");
+			elem *eBack=findElem(ehead,root->right->left->elem);
+			elem *e;
 
 			char *name=root->right->left->elem;
 			int type;
@@ -431,19 +654,26 @@ int eval(tree *root,func *fhead,elem *ehead)
 			int bool=FALSE;
 			char *str=NULL;
 			char *elem=root->right->right->left->elem;
-			if(e!=NULL)
-				return ELEMREDEF;
+			//if(e!=NULL)
+			//	{
+					
+			//	return ELEMREDEF;
 			if(argTypeCheck(root,2,STR,ELEM)==OK)
 				{
 					type=STR;
 					str=elem;
+					delElem(ehead,eBack);
 					err=addElem(ehead,type,num,bool,str,val,name);
 					IF_NOT_OK_RET(err);
 				}
 			else if(argTypeCheck(root,2,BOOL,ELEM)==OK)
 				{
 					type=BOOL;
+					if(elem==NULL)
+						return ERR;
+					//printf("elem:%s\n",elem);
 					bool=strToBool(elem);
+					delElem(ehead,eBack);
 					err=addElem(ehead,type,num,bool,str,val,name);
 					IF_NOT_OK_RET(err);
 				}
@@ -452,7 +682,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 				{
 					type=INT;
 					num=atoi(elem);
-					printf("%s,%s\n",name,elem);
+					delElem(ehead,eBack);
 					err=addElem(ehead,type,num,bool,str,val,name);
 					IF_NOT_OK_RET(err);
 				}
@@ -460,12 +690,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 				{
 					type=FLOAT;
 					val=atof(elem);
+					delElem(ehead,eBack);
 					err=addElem(ehead,type,num,bool,str,val,name);
 					IF_NOT_OK_RET(err);
 				}
 			else if(argTypeCheck(root,2,POLY,ELEM)==OK)
 				{
 					type=POLY;
+					delElem(ehead,eBack);
 					err=addElem(ehead,type,num,bool,str,val,name);
 					IF_NOT_OK_RET(err);
 				}
@@ -474,29 +706,1086 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e=findElem(ehead,root->right->right->left->elem);
 					if(e==NULL)
 						return ELEMNOTFOUND;
+					if(e==eBack)
+						return OK;
 					err=addElem(ehead,e->type,e->num,e->bool,e->str,e->val,name);
 					IF_NOT_OK_RET(err);
 				}
 			err=setTree(root,"TRUE",BOOL,ELEM);
 			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,delElem)
+		{
+			err=argCheck(root,1);
+			IF_NOT_OK_RET(err);
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			IF_NOT_OK_RET(err);
+			elem *e=findElem(ehead,root->right->left->elem);
+			if(e==NULL)
+				return ELEMNOTFOUND;
+			delElem(ehead,e);
+			err=setTree(root,"TRUE",BOOL,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,add)
+		{
+			int num1=0;
+			int num2=0;
+			double val1=0;
+			double val2=0;
+			elem *e1,*e2;
+			int type1,type2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
 			
-		}	
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=INT&&e1->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e1->type==INT)
+						{
+							num1=e1->num;
+							type1=INT;
+						}
+					else if(e1->type==FLOAT)
+						{
+							val1=e1->val;
+							type1=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,1,INT,ELEM)==OK)
+						{
+							num1=atoi(root->right->left->elem);
+							type1=INT;
+						}
+					else if(argTypeCheck(root,1,FLOAT,ELEM)==OK)
+						{
+							val1=atof(root->right->left->elem);
+							type1=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							num2=e2->num;
+							type2=INT;
+						}
+					else if(e2->type==FLOAT)
+						{
+							val2=e2->val;
+							type2=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,2,INT,ELEM)==OK)
+						{
+							num2=atoi(root->right->right->left->elem);
+							type2=INT;
+						}
+					else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+						{
+							val2=atof(root->right->right->left->elem);
+							type2=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			if(type1==INT&&type2==INT)
+				{
+					int re=num1+num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%i",re);
+					//printf("int:%s\n",reStr);
+					err=setTree(root,reStr,INT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==FLOAT)
+				{
+					double re=(double)num1+val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==FLOAT)
+				{
+					double re=val1+val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==INT)
+				{
+					double re=val1+(double)num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+
+		}
+	IFFUNC(root,cross)
+		{
+			int num1=0;
+			int num2=0;
+			double val1=0;
+			double val2=0;
+			elem *e1,*e2;
+			int type1,type2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=INT&&e1->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e1->type==INT)
+						{
+							num1=e1->num;
+							type1=INT;
+						}
+					else if(e1->type==FLOAT)
+						{
+							val1=e1->val;
+							type1=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,1,INT,ELEM)==OK)
+						{
+							num1=atoi(root->right->left->elem);
+							type1=INT;
+						}
+					else if(argTypeCheck(root,1,FLOAT,ELEM)==OK)
+						{
+							val1=atof(root->right->left->elem);
+							type1=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							num2=e2->num;
+							type2=INT;
+						}
+					else if(e2->type==FLOAT)
+						{
+							val2=e2->val;
+							type2=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,2,INT,ELEM)==OK)
+						{
+							num2=atoi(root->right->right->left->elem);
+							type2=INT;
+						}
+					else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+						{
+							val2=atof(root->right->right->left->elem);
+							type2=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			if(type1==INT&&type2==INT)
+				{
+					int re=num1*num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%i",re);
+					//printf("int:%s\n",reStr);
+					err=setTree(root,reStr,INT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==FLOAT)
+				{
+					double re=(double)num1*val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==FLOAT)
+				{
+					double re=val1*val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==INT)
+				{
+					double re=val1*(double)num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+
+		}
+	IFFUNC(root,sub)
+		{
+			int num1=0;
+			int num2=0;
+			double val1=0;
+			double val2=0;
+			elem *e1,*e2;
+			int type1,type2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=INT&&e1->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e1->type==INT)
+						{
+							num1=e1->num;
+							type1=INT;
+						}
+					else if(e1->type==FLOAT)
+						{
+							val1=e1->val;
+							type1=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,1,INT,ELEM)==OK)
+						{
+							num1=atoi(root->right->left->elem);
+							type1=INT;
+						}
+					else if(argTypeCheck(root,1,FLOAT,ELEM)==OK)
+						{
+							val1=atof(root->right->left->elem);
+							type1=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							num2=e2->num;
+							type2=INT;
+						}
+					else if(e2->type==FLOAT)
+						{
+							val2=e2->val;
+							type2=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,2,INT,ELEM)==OK)
+						{
+							num2=atoi(root->right->right->left->elem);
+							type2=INT;
+						}
+					else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+						{
+							val2=atof(root->right->right->left->elem);
+							type2=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			if(type1==INT&&type2==INT)
+				{
+					int re=num1-num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%i",re);
+					//printf("int:%s\n",reStr);
+					err=setTree(root,reStr,INT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==FLOAT)
+				{
+					double re=(double)num1-val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==FLOAT)
+				{
+					double re=val1-val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("double:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==INT)
+				{
+					double re=val1-(double)num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("double:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+
+		}
+	IFFUNC(root,div)
+		{
+			int num1=0;
+			int num2=0;
+			double val1=0;
+			double val2=0;
+			elem *e1,*e2;
+			int type1,type2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=INT&&e1->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e1->type==INT)
+						{
+							num1=e1->num;
+							type1=INT;
+						}
+					else if(e1->type==FLOAT)
+						{
+							val1=e1->val;
+							type1=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,1,INT,ELEM)==OK)
+						{
+							num1=atoi(root->right->left->elem);
+							type1=INT;
+						}
+					else if(argTypeCheck(root,1,FLOAT,ELEM)==OK)
+						{
+							val1=atof(root->right->left->elem);
+							type1=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							num2=e2->num;
+							type2=INT;
+						}
+					else if(e2->type==FLOAT)
+						{
+							val2=e2->val;
+							type2=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,2,INT,ELEM)==OK)
+						{
+							num2=atoi(root->right->right->left->elem);
+							type2=INT;
+						}
+					else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+						{
+							val2=atof(root->right->right->left->elem);
+							type2=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			if(type1==INT&&type2==INT)
+				{
+					int re=num1/num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%i",re);
+					//printf("int:%s\n",reStr);
+					err=setTree(root,reStr,INT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==FLOAT)
+				{
+					double re=(double)num1/val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==FLOAT)
+				{
+					double re=val1/val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==INT)
+				{
+					double re=val1/(double)num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+
+		}
+	IFFUNC(root,mod)
+		{
+			int num1=0;
+			int num2=0;
+			double val1=0;
+			double val2=0;
+			elem *e1,*e2;
+			int type1,type2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=INT&&e1->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e1->type==INT)
+						{
+							num1=e1->num;
+							type1=INT;
+						}
+					else if(e1->type==FLOAT)
+						{
+							val1=e1->val;
+							type1=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,1,INT,ELEM)==OK)
+						{
+							num1=atoi(root->right->left->elem);
+							type1=INT;
+						}
+					else if(argTypeCheck(root,1,FLOAT,ELEM)==OK)
+						{
+							val1=atof(root->right->left->elem);
+							type1=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							num2=e2->num;
+							type2=INT;
+						}
+					else if(e2->type==FLOAT)
+						{
+							val2=e2->val;
+							type2=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,2,INT,ELEM)==OK)
+						{
+							num2=atoi(root->right->right->left->elem);
+							type2=INT;
+						}
+					else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+						{
+							val2=atof(root->right->right->left->elem);
+							type2=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			if(type1==INT&&type2==INT)
+				{
+					int re=num1%num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%i",re);
+					//printf("int:%s\n",reStr);
+					err=setTree(root,reStr,INT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==FLOAT)
+				{
+					int re=num1%(int)val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%i",re);
+					//printf("int:%s\n",reStr);
+					err=setTree(root,reStr,INT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==FLOAT)
+				{
+					int re=(int)val1%(int)val2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%i",re);
+					//printf("int:%s\n",reStr);
+					err=setTree(root,reStr,INT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==INT)
+				{
+					int re=(int)val1%num2;
+					char reStr[STR_SIZE];
+					sprintf(reStr,"%i",re);
+					//printf("int:%s\n",reStr);
+					err=setTree(root,reStr,INT,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+
+		}
+	IFFUNC(root,equ)
+		{
+			int num1=0;
+			int num2=0;
+			double val1=0;
+			double val2=0;
+			elem *e1,*e2;
+			int type1,type2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=INT&&e1->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e1->type==INT)
+						{
+							num1=e1->num;
+							type1=INT;
+						}
+					else if(e1->type==FLOAT)
+						{
+							val1=e1->val;
+							type1=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,1,INT,ELEM)==OK)
+						{
+							num1=atoi(root->right->left->elem);
+							type1=INT;
+						}
+					else if(argTypeCheck(root,1,FLOAT,ELEM)==OK)
+						{
+							val1=atof(root->right->left->elem);
+							type1=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							num2=e2->num;
+							type2=INT;
+						}
+					else if(e2->type==FLOAT)
+						{
+							val2=e2->val;
+							type2=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,2,INT,ELEM)==OK)
+						{
+							num2=atoi(root->right->right->left->elem);
+							type2=INT;
+						}
+					else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+						{
+							val2=atof(root->right->right->left->elem);
+							type2=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			if(type1==INT&&type2==INT)
+				{
+					int bool;
+					if(num1==num2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==FLOAT)
+				{
+					int bool=equDouble((double)num1,val2);
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==FLOAT)
+				{
+					int bool=equDouble(val1,val2);
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==INT)
+				{
+					int bool=equDouble(val1,(double)num2);
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+
+		}
+	IFFUNC(root,less)
+		{
+			int num1=0;
+			int num2=0;
+			double val1=0;
+			double val2=0;
+			elem *e1,*e2;
+			int type1,type2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=INT&&e1->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e1->type==INT)
+						{
+							num1=e1->num;
+							type1=INT;
+						}
+					else if(e1->type==FLOAT)
+						{
+							val1=e1->val;
+							type1=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,1,INT,ELEM)==OK)
+						{
+							num1=atoi(root->right->left->elem);
+							type1=INT;
+						}
+					else if(argTypeCheck(root,1,FLOAT,ELEM)==OK)
+						{
+							val1=atof(root->right->left->elem);
+							type1=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							num2=e2->num;
+							type2=INT;
+						}
+					else if(e2->type==FLOAT)
+						{
+							val2=e2->val;
+							type2=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,2,INT,ELEM)==OK)
+						{
+							num2=atoi(root->right->right->left->elem);
+							type2=INT;
+						}
+					else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+						{
+							val2=atof(root->right->right->left->elem);
+							type2=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			if(type1==INT&&type2==INT)
+				{
+					int bool;
+					if(num1<num2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==FLOAT)
+				{
+					int bool;
+					if(num1<val2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==FLOAT)
+				{
+					int bool;
+					if(val1<val2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==INT)
+				{
+					int bool;
+					if(val1<num2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+
+		}
+	IFFUNC(root,bigger)
+		{
+			int num1=0;
+			int num2=0;
+			double val1=0;
+			double val2=0;
+			elem *e1,*e2;
+			int type1,type2;
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=INT&&e1->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e1->type==INT)
+						{
+							num1=e1->num;
+							type1=INT;
+						}
+					else if(e1->type==FLOAT)
+						{
+							val1=e1->val;
+							type1=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,1,INT,ELEM)==OK)
+						{
+							num1=atoi(root->right->left->elem);
+							type1=INT;
+						}
+					else if(argTypeCheck(root,1,FLOAT,ELEM)==OK)
+						{
+							val1=atof(root->right->left->elem);
+							type1=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							num2=e2->num;
+							type2=INT;
+						}
+					else if(e2->type==FLOAT)
+						{
+							val2=e2->val;
+							type2=FLOAT;
+						}
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					if(argTypeCheck(root,2,INT,ELEM)==OK)
+						{
+							num2=atoi(root->right->right->left->elem);
+							type2=INT;
+						}
+					else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+						{
+							val2=atof(root->right->right->left->elem);
+							type2=FLOAT;
+						}
+				}
+			else
+				return ARGTYPEERR;
+			if(type1==INT&&type2==INT)
+				{
+					int bool;
+					if(num1>num2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==FLOAT)
+				{
+					int bool;
+					if(num1>val2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==FLOAT)
+				{
+					int bool;
+					if(val1>val2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==FLOAT&&type2==INT)
+				{
+					int bool;
+					if(val1>num2)
+						bool=TRUE;
+					else
+						bool=FALSE;
+					err=setTree(root,boolToStr(bool),BOOL,ELEM);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+
+		}
+	//not a basic func
+	func *f=findFunc(fhead,root->left->elem);
+	if(f==NULL)
+		return FUNCNAMEERR;
+	printf("argNum:%i\n",f->argNum);
+
 	return OK;
 }
 	
+int loadFile(char *path,func *fhead,elem *ehead)
+{
+	FILE *fp;
+	char line[STR_SIZE];
+	if((fp=fopen(path,"r"))==NULL)
+		{
+			return ERR;
+		}
+	while(!feof(fp))
+		{
+			fgets(line,STR_SIZE,fp);
+			if(gramCheck(line)!=OK)
+				{
+					continue;
+				}
+			
+			tree *root=treeInit();			
 
+
+			if(plantTree(root,line,ehead)!=OK)
+				{
+					continue;
+				}
+			int err=eval(root,fhead,ehead);
+			//printf("%s\n",statToStr(err));
+			//printf("\n");
+			if(err==EXIT)
+				return 0;
+			freeTree(root);
+		}
+	fclose(fp);
+	return OK;
+}
+	
 int main()
 {
 	func *fhead=funcInit();
 	elem *ehead=elemInit();
+	//	loadFile("./init.ml",fhead,ehead);
 	while(TRUE)
 		{
-			
 			char *line=readline("mkq> ");
 			printf("\n");
 			if(gramCheck(line)!=OK)
 				{
 					ERROR("gramCheck not ok!\n");
+					free(line);
+					continue;
 				}
 			
 			tree *root=treeInit();			
@@ -505,16 +1794,16 @@ int main()
 			if(plantTree(root,line,ehead)!=OK)
 				{
 					ERROR("plant not OK\n");
+					free(line);
 					continue;
 				}
 
 			int err=eval(root,fhead,ehead);
-			printf("%i\n",err);
 			printf("%s\n",statToStr(err));
-			//printFile("test");
 			printf("\n");
 			if(err==EXIT)
 				return 0;
 			freeTree(root);
+			free(line);
 		}
 }

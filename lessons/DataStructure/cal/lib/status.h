@@ -17,6 +17,7 @@
 #define FUNCNAMEERR	12
 #define ELEMREDEF	13
 #define ELEMNOTFOUND	14
+#define ELEMTYPEERR	15
 
 #define EXIT		100
 
@@ -54,6 +55,8 @@ char *statToStr(int stat)
 			return "ELEMREDEF";
 		case ELEMNOTFOUND:
 			return "ELEMNOTFOUND";
+		case ELEMTYPEERR:
+			return "ELEMTYPEERR";
 		case EXIT:
 			return "EXIT";
 		default:

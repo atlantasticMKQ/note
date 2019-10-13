@@ -38,14 +38,19 @@ int addElem(elem *head,int type,int num,int bool,char *str,double val,char *name
 	tail->num=num;
 	tail->bool=bool;
 	//tail->str=str;
-	tail->str=MALLOC_NUM(char,STR_SIZE);
-	if(tail->str==NULL)
+	if(type==STR)
 		{
-			free(tail);
-			tailH->next=NULL;
-			return OF;
+			tail->str=MALLOC_NUM(char,STR_SIZE);
+			if(tail->str==NULL)
+				{
+					free(tail);
+					tailH->next=NULL;
+					return OF;
+				}
+			strcpy(tail->str,str);
 		}
-	strcpy(tail->str,str);
+	else
+		tail->str=NULL;
 	tail->val=val;
 	//tail->name=name;
 	tail->name=MALLOC_NUM(char,FUNC_NAME_SIZE);
@@ -57,6 +62,7 @@ int addElem(elem *head,int type,int num,int bool,char *str,double val,char *name
 			return OF;
 		}
 	strcpy(tail->name,name);
+	tail->next=NULL;
 	return OK;
 }
 elem *findElem(elem *head,char *name)
@@ -70,6 +76,19 @@ elem *findElem(elem *head,char *name)
 		}
 	return NULL;
 }
+int delElem(elem *ehead,elem *toDel)
+{
+	elem *tmp;
+	for(tmp=ehead;tmp->next!=toDel&&tmp->next!=NULL;tmp=tmp->next);
+	if(tmp->next==NULL)
+		return ELEMNOTFOUND;
+	tmp->next=toDel->next;
+	free(toDel->name);
+	free(toDel->str);
+	free(toDel);
+	return OK;
+}
+		 
 int freeElem(elem *elemHead)
 {
 	if(elemHead==NULL)
@@ -106,16 +125,16 @@ int printElem(elem *thisElem)
 			printf("%s:UNSET\n",thisElem->name);
 			break;
 		case INT:
-			printf("%s:%i\n",thisElem->name,thisElem->num);
+			printf("%s:%i:INT\n",thisElem->name,thisElem->num);
 			break;
 		case FLOAT:
-			printf("%s:%lf\n",thisElem->name,thisElem->val);
+			printf("%s:%lf:FLOAT\n",thisElem->name,thisElem->val);
 			break;
 		case BOOL:
-			printf("%s:%s\n",thisElem->name,boolToStr(thisElem->bool));
+			printf("%s:%s:BOOL\n",thisElem->name,boolToStr(thisElem->bool));
 			break;
 		case STR:
-			printf("%s:%s\n",thisElem->name,thisElem->str);
+			printf("%s:%s:STR\n",thisElem->name,thisElem->str);
 			break;
 		default:
 			printf("unknown type val\n");
@@ -126,11 +145,17 @@ int printElem(elem *thisElem)
 int foreachElem(elem *head,int (* method)(elem *thisElem))
 {
 	for(elem *tmp=head;tmp->next!=NULL;tmp=tmp->next)
-		method(tmp);
+		method(tmp->next);
 	return OK;
 }
 
-	
+int equDouble(double a1,double a2)
+{
+	if((a1-a1)<0.00000001)
+		return TRUE;
+	else
+		return FALSE;
+}
 	
 
 				

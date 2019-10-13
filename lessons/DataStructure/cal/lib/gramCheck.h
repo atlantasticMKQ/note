@@ -185,9 +185,14 @@ int bracCharCheck(char *str)
 {
 	if(!ifLeft(*str))
 		return MATCHERR;
+	int strTag=0;
 	for(char *c=str;*c!='\0'&&*c!='\n';c++)
 		{
-			if(ifCharInLaw(*c)==FALSE)
+			if(*c=='"'&&strTag==0)
+				strTag=1;
+			else if(*c=='"'&&strTag==1)
+				strTag=0;
+			if(strTag!=1&&ifCharInLaw(*c)==FALSE)
 				return NAMEERR;
 		}
 
