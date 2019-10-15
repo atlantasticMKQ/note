@@ -6,17 +6,18 @@
 
 #include"lib/tools.h"
 #include"lib/bool.h"
+#include"lib/double.h"
 #include"lib/status.h"
 #include"lib/types.h"
 #include"lib/str.h"
 #include"lib/file.h"
+#include"lib/poly.h"
 
 #include"lib/elem.h"
 #include"lib/treeBasic.h"
 #include"lib/func.h"
 #include"lib/gramCheck.h"
 #include"lib/plantTree.h"
-
 #define EXIT	100
 	
 		
@@ -376,13 +377,16 @@ int eval(tree *root,func *fhead,elem *ehead)
 											printf("%i",e->num);
 											break;
 										case FLOAT:
-											printf("%lf",e->val);
+											printf("%.4f",e->val);
 											break;
 										case BOOL:
 											printf("%s",boolToStr(e->bool));
 											break;
 										case STR:
 											printf("%s",e->str);
+											break;
+										case POLY:
+											foreachPoly(e->head,printPoly);
 											break;
 										}
 								}
@@ -665,6 +669,91 @@ int eval(tree *root,func *fhead,elem *ehead)
 			IF_NOT_OK_RET(err);
 			return OK;
 		}
+	IFFUNC(root,poly)
+		{
+			int anum=argNum(root);
+			if(anum%2!=0)
+				return ARGNUMERR;
+			for(int i=1;i<=anum;i++)
+				{
+					int type;
+					if(i%2==1)
+						type=FLOAT;
+					else
+						type=INT;
+					err=argTypeCheck(root,i,INT,ELEM);
+					if(err!=OK)
+						err=argTypeCheck(root,i,type,ELEM);
+					if(err!=OK)
+						{
+							err=argTypeCheck(root,i,UNSET,ELEM);
+							if(err==OK)
+								{
+									tree *thisArg=root;
+									for(int j=0;j<i;j++)
+										{
+											thisArg=thisArg->right;
+										}
+									thisArg=thisArg->left;
+									elem *e=findElem(ehead,thisArg->elem);
+									if(e==NULL)
+										return ELEMNOTFOUND;
+									if(e->type!=INT&&e->type!=type)
+										return ARGTYPEERR;
+									char *elem=MALLOC_NUM(char,NAME_SIZE);
+									if(elem==NULL)
+										return OF;
+									if(e->type==FLOAT)
+										sprintf(elem,"%lf",e->val);
+									else
+										sprintf(elem,"%i",e->num);
+									err=setTree(thisArg,elem,type,ELEM);
+									IF_NOT_OK_DO_RET(err,free(elem));
+									free(elem);
+								}
+							else
+								return ARGTYPEERR;
+						}
+				}
+			double val;
+			int exp;
+			poly *head=polyInit();
+			IF_NULL_RET_OF(head);
+			for(int i=1;i<=anum;i++)
+				{
+					tree *thisArg=root;
+					for(int j=0;j<i;j++)
+						{
+							thisArg=thisArg->right;
+						}
+					thisArg=thisArg->left;
+					if(i%2==1)
+						{
+							val=atof(thisArg->elem);
+						}
+					else
+						{
+							exp=atoi(thisArg->elem);
+							err=addPolyNode(head,exp,val);
+							if(err!=OK)
+								{
+									freePoly(head);
+									return err;
+								}
+						}
+				}
+			char *elem=polyToStr(head);
+			if(elem==NULL)
+				return OF;
+			err=setTree(root,elem,POLY,ELEM);
+			if(err!=OK)
+				{
+					freePoly(head);
+					free(elem);
+					return err;
+				}
+			return OK;
+		}
 	IFFUNC(root,let)
 		{
 			err=argCheck(root,2);
@@ -690,7 +779,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					type=STR;
 					str=elem;
 					delElem(ehead,eBack);
-					err=addElem(ehead,type,num,bool,str,val,name);
+					err=addElem(ehead,type,num,bool,str,NULL,val,name);
 					IF_NOT_OK_RET(err);
 				}
 			else if(argTypeCheck(root,2,BOOL,ELEM)==OK)
@@ -701,7 +790,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					//printf("elem:%s\n",elem);
 					bool=strToBool(elem);
 					delElem(ehead,eBack);
-					err=addElem(ehead,type,num,bool,str,val,name);
+					err=addElem(ehead,type,num,bool,str,NULL,val,name);
 					IF_NOT_OK_RET(err);
 				}
 			
@@ -710,7 +799,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					type=INT;
 					num=atoi(elem);
 					delElem(ehead,eBack);
-					err=addElem(ehead,type,num,bool,str,val,name);
+					err=addElem(ehead,type,num,bool,str,NULL,val,name);
 					IF_NOT_OK_RET(err);
 				}
 			else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
@@ -718,14 +807,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 					type=FLOAT;
 					val=atof(elem);
 					delElem(ehead,eBack);
-					err=addElem(ehead,type,num,bool,str,val,name);
+					err=addElem(ehead,type,num,bool,str,NULL,val,name);
 					IF_NOT_OK_RET(err);
 				}
 			else if(argTypeCheck(root,2,POLY,ELEM)==OK)
 				{
 					type=POLY;
 					delElem(ehead,eBack);
-					err=addElem(ehead,type,num,bool,str,val,name);
+					err=addElem(ehead,type,num,bool,str,elem,val,name);
 					IF_NOT_OK_RET(err);
 				}
 			else if(argTypeCheck(root,2,UNSET,ELEM)==OK)
@@ -735,9 +824,18 @@ int eval(tree *root,func *fhead,elem *ehead)
 						return ELEMNOTFOUND;
 					if(e==eBack)
 						return OK;
-					err=addElem(ehead,e->type,e->num,e->bool,e->str,e->val,name);
+					char *polyElem=NULL;
+					if(e->type==POLY&&e->head!=NULL)
+						{
+							polyElem=polyToStr(e->head);
+							if(polyElem==NULL)
+								return OF;
+						}
+					err=addElem(ehead,e->type,e->num,e->bool,e->str,polyElem,e->val,name);
+					free(polyElem);
 					IF_NOT_OK_RET(err);
 				}
+
 			err=setTree(root,"TRUE",BOOL,ELEM);
 			IF_NOT_OK_RET(err);
 			return OK;
@@ -764,6 +862,8 @@ int eval(tree *root,func *fhead,elem *ehead)
 			double val2=0;
 			elem *e1,*e2;
 			int type1,type2;
+			poly *p1,*p2;
+			int p1Free=0,p2Free=0;
 			err=argCheck(root,2);
 			IF_NOT_OK_RET(err);
 			
@@ -775,7 +875,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e1=findElem(ehead,root->right->left->elem);
 					if(e1==NULL)
 						return ELEMNOTFOUND;
-					if(e1->type!=INT&&e1->type!=FLOAT)
+					if(e1->type!=INT&&e1->type!=FLOAT&&e1->type!=POLY)
 						return ELEMTYPEERR;
 					if(e1->type==INT)
 						{
@@ -787,8 +887,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val1=e1->val;
 							type1=FLOAT;
 						}
+					else
+						{
+							p1=e1->head;
+							type1=POLY;
+						}
 				}
-			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK||argTypeCheck(root,1,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,1,INT,ELEM)==OK)
 						{
@@ -799,6 +904,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val1=atof(root->right->left->elem);
 							type1=FLOAT;
+						}
+					else
+						{
+							p1Free=1;
+							p1=strToPoly(root->right->left->elem);
+							if(p1==NULL)
+								return OF;
+							type1=POLY;
 						}
 				}
 			else
@@ -811,7 +924,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e2=findElem(ehead,root->right->right->left->elem);
 					if(e2==NULL)
 						return ELEMNOTFOUND;
-					if(e2->type!=INT&&e2->type!=FLOAT)
+					if(e2->type!=INT&&e2->type!=FLOAT&&e2->type!=POLY)
 						return ELEMTYPEERR;
 					if(e2->type==INT)
 						{
@@ -823,8 +936,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val2=e2->val;
 							type2=FLOAT;
 						}
+					else
+						{
+							p2=e2->head;
+							type2=FLOAT;
+						}
 				}
-			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK||argTypeCheck(root,2,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,2,INT,ELEM)==OK)
 						{
@@ -835,6 +953,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val2=atof(root->right->right->left->elem);
 							type2=FLOAT;
+						}
+					else
+						{
+							p2Free=1;
+							p2=strToPoly(root->right->right->left->elem);
+							if(p2==NULL)
+								return OF;
+							type2=POLY;
 						}
 				}
 			else
@@ -879,6 +1005,38 @@ int eval(tree *root,func *fhead,elem *ehead)
 					IF_NOT_OK_RET(err);
 					return OK;
 				}
+			else if(type1==POLY&&type2==INT);
+			else if(type1==POLY&&type2==FLOAT);
+			else if(type1==POLY&&type2==POLY)
+				{
+					//printf("mkq\n");
+					//foreachPoly(p1,printPoly);
+					//foreachPoly(p2,printPoly);					
+					poly *sum=addPoly(p1,p2);
+					//printf("\n");
+					//foreachPoly(sum,printPoly);
+					if(sum==NULL)
+						{
+							if(p1Free)
+								freePoly(p1);
+							if(p2Free)
+								freePoly(p2);
+							return OF;
+						}
+					char *reStr=polyToStr(sum);
+					err=setTree(root,reStr,POLY,ELEM);
+					free(reStr);
+					if(p1Free)
+						freePoly(p1);
+					if(p2Free)
+						freePoly(p2);
+					freePoly(sum);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==POLY);
+			else if(type1==FLOAT&&type2==POLY);
+				
 
 		}
 	IFFUNC(root,cross)
@@ -889,6 +1047,8 @@ int eval(tree *root,func *fhead,elem *ehead)
 			double val2=0;
 			elem *e1,*e2;
 			int type1,type2;
+			poly *p1,*p2;
+			int p1Free=0,p2Free=0;
 			err=argCheck(root,2);
 			IF_NOT_OK_RET(err);
 			
@@ -900,7 +1060,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e1=findElem(ehead,root->right->left->elem);
 					if(e1==NULL)
 						return ELEMNOTFOUND;
-					if(e1->type!=INT&&e1->type!=FLOAT)
+					if(e1->type!=INT&&e1->type!=FLOAT&&e1->type!=POLY)
 						return ELEMTYPEERR;
 					if(e1->type==INT)
 						{
@@ -912,8 +1072,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val1=e1->val;
 							type1=FLOAT;
 						}
+					else
+						{
+							p1=e1->head;
+							type1=POLY;
+						}
 				}
-			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK||argTypeCheck(root,1,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,1,INT,ELEM)==OK)
 						{
@@ -924,6 +1089,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val1=atof(root->right->left->elem);
 							type1=FLOAT;
+						}
+					else
+						{
+							p1Free=1;
+							p1=strToPoly(root->right->left->elem);
+							if(p1==NULL)
+								return OF;
+							type1=POLY;
 						}
 				}
 			else
@@ -936,7 +1109,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e2=findElem(ehead,root->right->right->left->elem);
 					if(e2==NULL)
 						return ELEMNOTFOUND;
-					if(e2->type!=INT&&e2->type!=FLOAT)
+					if(e2->type!=INT&&e2->type!=FLOAT&&e2->type!=POLY)
 						return ELEMTYPEERR;
 					if(e2->type==INT)
 						{
@@ -948,8 +1121,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val2=e2->val;
 							type2=FLOAT;
 						}
+					else
+						{
+							p2=e2->head;
+							type2=POLY;
+						}
 				}
-			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK||argTypeCheck(root,2,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,2,INT,ELEM)==OK)
 						{
@@ -960,6 +1138,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val2=atof(root->right->right->left->elem);
 							type2=FLOAT;
+						}
+					else
+						{
+							p2Free=1;
+							p2=strToPoly(root->right->right->left->elem);
+							if(p2==NULL)
+								return OF;
+							type2=POLY;
 						}
 				}
 			else
@@ -1004,6 +1190,38 @@ int eval(tree *root,func *fhead,elem *ehead)
 					IF_NOT_OK_RET(err);
 					return OK;
 				}
+						else if(type1==POLY&&type2==INT);
+			else if(type1==POLY&&type2==FLOAT);
+			else if(type1==POLY&&type2==POLY)
+				{
+					//printf("mkq\n");
+					//foreachPoly(p1,printPoly);
+					//foreachPoly(p2,printPoly);					
+					poly *sum=crossPoly(p1,p2);
+					//printf("\n");
+				       	//foreachPoly(sum,printPoly);
+					if(sum==NULL)
+						{
+							if(p1Free)
+								freePoly(p1);
+							if(p2Free)
+								freePoly(p2);
+							return OF;
+						}
+					char *reStr=polyToStr(sum);
+					err=setTree(root,reStr,POLY,ELEM);
+					free(reStr);
+					if(p1Free)
+						freePoly(p1);
+					if(p2Free)
+						freePoly(p2);
+					freePoly(sum);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==POLY);
+			else if(type1==FLOAT&&type2==POLY);
+
 
 		}
 	IFFUNC(root,sub)
@@ -1014,6 +1232,8 @@ int eval(tree *root,func *fhead,elem *ehead)
 			double val2=0;
 			elem *e1,*e2;
 			int type1,type2;
+			poly *p1,*p2;
+			int p1Free=0,p2Free=0;
 			err=argCheck(root,2);
 			IF_NOT_OK_RET(err);
 			
@@ -1025,7 +1245,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e1=findElem(ehead,root->right->left->elem);
 					if(e1==NULL)
 						return ELEMNOTFOUND;
-					if(e1->type!=INT&&e1->type!=FLOAT)
+					if(e1->type!=INT&&e1->type!=FLOAT&&e1->type!=POLY)
 						return ELEMTYPEERR;
 					if(e1->type==INT)
 						{
@@ -1037,8 +1257,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val1=e1->val;
 							type1=FLOAT;
 						}
+					else
+						{
+							p1=e1->head;
+							type1=POLY;
+						}
 				}
-			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK||argTypeCheck(root,1,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,1,INT,ELEM)==OK)
 						{
@@ -1049,6 +1274,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val1=atof(root->right->left->elem);
 							type1=FLOAT;
+						}
+					else
+						{
+							p1Free=1;
+							p1=strToPoly(root->right->left->elem);
+							if(p1==NULL)
+								return OF;
+							type1=POLY;
 						}
 				}
 			else
@@ -1061,7 +1294,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e2=findElem(ehead,root->right->right->left->elem);
 					if(e2==NULL)
 						return ELEMNOTFOUND;
-					if(e2->type!=INT&&e2->type!=FLOAT)
+					if(e2->type!=INT&&e2->type!=FLOAT&&e2->type!=POLY)
 						return ELEMTYPEERR;
 					if(e2->type==INT)
 						{
@@ -1073,8 +1306,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val2=e2->val;
 							type2=FLOAT;
 						}
+					else
+						{
+							p2=e2->head;
+							type2=POLY;
+						}
 				}
-			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK||argTypeCheck(root,2,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,2,INT,ELEM)==OK)
 						{
@@ -1085,6 +1323,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val2=atof(root->right->right->left->elem);
 							type2=FLOAT;
+						}
+					else
+						{
+							p2Free=1;
+							p2=strToPoly(root->right->right->left->elem);
+							if(p2==NULL)
+								return OF;
+							type2=POLY;
 						}
 				}
 			else
@@ -1114,7 +1360,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					double re=val1-val2;
 					char reStr[STR_SIZE];
 					sprintf(reStr,"%lf",re);
-					//printf("double:%s\n",reStr);
+					//printf("float:%s\n",reStr);
 					err=setTree(root,reStr,FLOAT,ELEM);
 					IF_NOT_OK_RET(err);
 					return OK;
@@ -1124,11 +1370,43 @@ int eval(tree *root,func *fhead,elem *ehead)
 					double re=val1-(double)num2;
 					char reStr[STR_SIZE];
 					sprintf(reStr,"%lf",re);
-					//printf("double:%s\n",reStr);
+					//printf("float:%s\n",reStr);
 					err=setTree(root,reStr,FLOAT,ELEM);
 					IF_NOT_OK_RET(err);
 					return OK;
 				}
+						else if(type1==POLY&&type2==INT);
+			else if(type1==POLY&&type2==FLOAT);
+			else if(type1==POLY&&type2==POLY)
+				{
+					//printf("mkq\n");
+					//foreachPoly(p1,printPoly);
+					//foreachPoly(p2,printPoly);					
+					poly *sum=subPoly(p1,p2);
+					//printf("\n");
+				       	foreachPoly(sum,printPoly);
+					if(sum==NULL)
+						{
+							if(p1Free)
+								freePoly(p1);
+							if(p2Free)
+								freePoly(p2);
+							return OF;
+						}
+					char *reStr=polyToStr(sum);
+					err=setTree(root,reStr,POLY,ELEM);
+					free(reStr);
+					if(p1Free)
+						freePoly(p1);
+					if(p2Free)
+						freePoly(p2);
+					freePoly(sum);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==POLY);
+			else if(type1==FLOAT&&type2==POLY);
+
 
 		}
 	IFFUNC(root,div)
@@ -1139,6 +1417,8 @@ int eval(tree *root,func *fhead,elem *ehead)
 			double val2=0;
 			elem *e1,*e2;
 			int type1,type2;
+			poly *p1,*p2;
+			int p1Free=0,p2Free=0;
 			err=argCheck(root,2);
 			IF_NOT_OK_RET(err);
 			
@@ -1150,7 +1430,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e1=findElem(ehead,root->right->left->elem);
 					if(e1==NULL)
 						return ELEMNOTFOUND;
-					if(e1->type!=INT&&e1->type!=FLOAT)
+					if(e1->type!=INT&&e1->type!=FLOAT&&e1->type!=POLY)
 						return ELEMTYPEERR;
 					if(e1->type==INT)
 						{
@@ -1162,8 +1442,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val1=e1->val;
 							type1=FLOAT;
 						}
+					else
+						{
+							p1=e1->head;
+							type1=POLY;
+						}
 				}
-			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK||argTypeCheck(root,1,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,1,INT,ELEM)==OK)
 						{
@@ -1174,6 +1459,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val1=atof(root->right->left->elem);
 							type1=FLOAT;
+						}
+					else
+						{
+							p1Free=1;
+							p1=strToPoly(root->right->left->elem);
+							if(p1==NULL)
+								return OF;
+							type1=POLY;
 						}
 				}
 			else
@@ -1186,7 +1479,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e2=findElem(ehead,root->right->right->left->elem);
 					if(e2==NULL)
 						return ELEMNOTFOUND;
-					if(e2->type!=INT&&e2->type!=FLOAT)
+					if(e2->type!=INT&&e2->type!=FLOAT&&e2->type!=POLY)
 						return ELEMTYPEERR;
 					if(e2->type==INT)
 						{
@@ -1198,8 +1491,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val2=e2->val;
 							type2=FLOAT;
 						}
+					else
+						{
+							p2=e2->head;
+							type2=POLY;
+						}
 				}
-			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK||argTypeCheck(root,2,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,2,INT,ELEM)==OK)
 						{
@@ -1210,6 +1508,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val2=atof(root->right->right->left->elem);
 							type2=FLOAT;
+						}
+					else
+						{
+							p2Free=1;
+							p2=strToPoly(root->right->right->left->elem);
+							if(p2==NULL)
+								return OF;
+							type2=POLY;
 						}
 				}
 			else
@@ -1254,6 +1560,38 @@ int eval(tree *root,func *fhead,elem *ehead)
 					IF_NOT_OK_RET(err);
 					return OK;
 				}
+			else if(type1==POLY&&type2==INT);
+			else if(type1==POLY&&type2==FLOAT);
+			else if(type1==POLY&&type2==POLY)
+				{
+					//printf("mkq\n");
+					//foreachPoly(p1,printPoly);
+					//foreachPoly(p2,printPoly);					
+					poly *sum=divPoly(p1,p2);
+					//printf("\n");
+				       	//foreachPoly(sum,printPoly);
+					if(sum==NULL)
+						{
+							if(p1Free)
+								freePoly(p1);
+							if(p2Free)
+								freePoly(p2);
+							return OF;
+						}
+					char *reStr=polyToStr(sum);
+					err=setTree(root,reStr,POLY,ELEM);
+					free(reStr);
+					if(p1Free)
+						freePoly(p1);
+					if(p2Free)
+						freePoly(p2);
+					freePoly(sum);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==POLY);
+			else if(type1==FLOAT&&type2==POLY);
+
 
 		}
 	IFFUNC(root,mod)
@@ -1264,6 +1602,8 @@ int eval(tree *root,func *fhead,elem *ehead)
 			double val2=0;
 			elem *e1,*e2;
 			int type1,type2;
+			poly *p1,*p2;
+			int p1Free=0,p2Free=0;
 			err=argCheck(root,2);
 			IF_NOT_OK_RET(err);
 			
@@ -1275,7 +1615,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e1=findElem(ehead,root->right->left->elem);
 					if(e1==NULL)
 						return ELEMNOTFOUND;
-					if(e1->type!=INT&&e1->type!=FLOAT)
+					if(e1->type!=INT&&e1->type!=FLOAT&&e1->type!=POLY)
 						return ELEMTYPEERR;
 					if(e1->type==INT)
 						{
@@ -1287,8 +1627,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val1=e1->val;
 							type1=FLOAT;
 						}
+					else
+						{
+							p1=e1->head;
+							type1=POLY;
+						}
 				}
-			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,1,INT,ELEM)==OK||argTypeCheck(root,1,FLOAT,ELEM)==OK||argTypeCheck(root,1,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,1,INT,ELEM)==OK)
 						{
@@ -1299,6 +1644,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val1=atof(root->right->left->elem);
 							type1=FLOAT;
+						}
+					else
+						{
+							p1Free=1;
+							p1=strToPoly(root->right->left->elem);
+							if(p1==NULL)
+								return OF;
+							type1=POLY;
 						}
 				}
 			else
@@ -1311,7 +1664,7 @@ int eval(tree *root,func *fhead,elem *ehead)
 					e2=findElem(ehead,root->right->right->left->elem);
 					if(e2==NULL)
 						return ELEMNOTFOUND;
-					if(e2->type!=INT&&e2->type!=FLOAT)
+					if(e2->type!=INT&&e2->type!=FLOAT&&e2->type!=POLY)
 						return ELEMTYPEERR;
 					if(e2->type==INT)
 						{
@@ -1323,8 +1676,13 @@ int eval(tree *root,func *fhead,elem *ehead)
 							val2=e2->val;
 							type2=FLOAT;
 						}
+					else
+						{
+							p2=e2->head;
+							type2=POLY;
+						}
 				}
-			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK)
+			else if(argTypeCheck(root,2,INT,ELEM)==OK||argTypeCheck(root,2,FLOAT,ELEM)==OK||argTypeCheck(root,2,POLY,ELEM)==OK)
 				{
 					if(argTypeCheck(root,2,INT,ELEM)==OK)
 						{
@@ -1335,6 +1693,14 @@ int eval(tree *root,func *fhead,elem *ehead)
 						{
 							val2=atof(root->right->right->left->elem);
 							type2=FLOAT;
+						}
+					else
+						{
+							p2Free=1;
+							p2=strToPoly(root->right->right->left->elem);
+							if(p2==NULL)
+								return OF;
+							type2=POLY;
 						}
 				}
 			else
@@ -1351,36 +1717,69 @@ int eval(tree *root,func *fhead,elem *ehead)
 				}
 			else if(type1==INT&&type2==FLOAT)
 				{
-					int re=num1%(int)val2;
+					double re=(double)num1/val2;
 					char reStr[STR_SIZE];
-					sprintf(reStr,"%i",re);
-					//printf("int:%s\n",reStr);
-					err=setTree(root,reStr,INT,ELEM);
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
 					IF_NOT_OK_RET(err);
 					return OK;
 				}
 			else if(type1==FLOAT&&type2==FLOAT)
 				{
-					int re=(int)val1%(int)val2;
+					double re=val1/val2;
 					char reStr[STR_SIZE];
-					sprintf(reStr,"%i",re);
-					//printf("int:%s\n",reStr);
-					err=setTree(root,reStr,INT,ELEM);
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
 					IF_NOT_OK_RET(err);
 					return OK;
 				}
 			else if(type1==FLOAT&&type2==INT)
 				{
-					int re=(int)val1%num2;
+					double re=val1/(double)num2;
 					char reStr[STR_SIZE];
-					sprintf(reStr,"%i",re);
-					//printf("int:%s\n",reStr);
-					err=setTree(root,reStr,INT,ELEM);
+					sprintf(reStr,"%lf",re);
+					//printf("float:%s\n",reStr);
+					err=setTree(root,reStr,FLOAT,ELEM);
 					IF_NOT_OK_RET(err);
 					return OK;
 				}
+			else if(type1==POLY&&type2==INT);
+			else if(type1==POLY&&type2==FLOAT);
+			else if(type1==POLY&&type2==POLY)
+				{
+					//printf("mkq\n");
+					//foreachPoly(p1,printPoly);
+					//foreachPoly(p2,printPoly);					
+					poly *sum=modPoly(p1,p2);
+					//printf("\n");
+					//foreachPoly(sum,printPoly);
+					if(sum==NULL)
+						{
+							if(p1Free)
+								freePoly(p1);
+							if(p2Free)
+								freePoly(p2);
+							return OF;
+						}
+					char *reStr=polyToStr(sum);
+					err=setTree(root,reStr,POLY,ELEM);
+					free(reStr);
+					if(p1Free)
+						freePoly(p1);
+					if(p2Free)
+						freePoly(p2);
+					freePoly(sum);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else if(type1==INT&&type2==POLY);
+			else if(type1==FLOAT&&type2==POLY);
+				
 
 		}
+	
 	IFFUNC(root,equ)
 		{
 			int num1=0;
@@ -1756,6 +2155,280 @@ int eval(tree *root,func *fhead,elem *ehead)
 				}
 
 		}
+	IFFUNC(root,calPoly)
+		{
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			elem *e1,*e2;
+			poly *p;
+			double x;
+			int pFree=0;
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=POLY)
+						return ELEMTYPEERR;
+					if(e1->type==POLY)
+						{
+							p=e1->head;
+						}
+				}
+			else if(argTypeCheck(root,1,POLY,ELEM)==OK)
+				{
+					pFree=1;
+					p=strToPoly(root->right->left->elem);
+					IF_NULL_RET_OF(p);
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT&&e2->type!=FLOAT)
+						return ELEMTYPEERR;
+					if(e2->type==INT)
+						{
+							x=(double)e2->num;
+						}
+					else
+						x=e2->val;
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK)
+				{
+					
+					x=(double)atoi(root->right->right->left->elem);
+				}
+			else if(argTypeCheck(root,2,FLOAT,ELEM)==OK)
+				{
+					
+					x=atof(root->right->right->left->elem);
+				}
+
+			else
+				return ARGTYPEERR;
+			char strRet[STR_SIZE];
+			sprintf(strRet,"%lf",calPoly(p,x));
+			if(pFree)
+				freePoly(p);
+			err=setTree(root,strRet,FLOAT,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,expPoly)
+		{
+			err=argCheck(root,2);
+			IF_NOT_OK_RET(err);
+			elem *e1,*e2;
+			poly *p;
+			int x;
+			int pFree=0;
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=POLY)
+						return ELEMTYPEERR;
+					if(e1->type==POLY)
+						{
+							p=e1->head;
+						}
+				}
+			else if(argTypeCheck(root,1,POLY,ELEM)==OK)
+				{
+					pFree=1;
+					p=strToPoly(root->right->left->elem);
+					IF_NULL_RET_OF(p);
+				}
+			else
+				return ARGTYPEERR;
+			err=argTypeCheck(root,2,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e2=findElem(ehead,root->right->right->left->elem);
+					if(e2==NULL)
+						return ELEMNOTFOUND;
+					if(e2->type!=INT)
+						return ELEMTYPEERR;
+					x=e2->num;
+				}
+			else if(argTypeCheck(root,2,INT,ELEM)==OK)
+				{
+					
+					x=atoi(root->right->right->left->elem);
+				}
+			else
+				return ARGTYPEERR;
+			poly *tmp=expPoly(p,x);
+			//printf("x:%i\n",x);
+			//foreachPoly(p,printPoly);
+			//foreachPoly(tmp,printPoly);
+			//printf("\n");
+			if(tmp==NULL)
+				{
+					if(pFree)
+						freePoly(p);
+					return OF;
+				}
+			char *strRet=polyToStr(tmp);
+			if(strRet==NULL)
+				{
+					if(pFree)
+						freePoly(p);
+					freePoly(tmp);
+					return OF;
+				}
+			err=setTree(root,strRet,POLY,ELEM);
+			if(pFree)
+				freePoly(p);
+			freePoly(tmp);
+			free(strRet);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,sPoly)
+		{
+			err=argCheck(root,1);
+			IF_NOT_OK_RET(err);
+			elem *e1;
+			poly *p;
+			int pFree=1;
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=POLY)
+						return ELEMTYPEERR;
+					if(e1->type==POLY)
+						{
+							p=clonePoly(e1->head);
+							if(p==NULL)
+								return OF;
+						}
+				}
+			else if(argTypeCheck(root,1,POLY,ELEM)==OK)
+				{
+					pFree=1;
+					p=strToPoly(root->right->left->elem);
+					IF_NULL_RET_OF(p);
+				}
+			else
+				return ARGTYPEERR;
+
+			s1Poly(p);
+			
+			//printf("x:%i\n",x);
+			//foreachPoly(p,printPoly);
+			//foreachPoly(tmp,printPoly);
+			//printf("\n");
+			if(p==NULL)
+				{
+					if(pFree)
+						freePoly(p);
+					return OF;
+				}
+			char *strRet=polyToStr(p);
+			if(strRet==NULL)
+				{
+					if(pFree)
+						freePoly(p);
+					return OF;
+				}
+			err=setTree(root,strRet,POLY,ELEM);
+			if(pFree)
+				freePoly(p);
+			free(strRet);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,dPoly)
+		{
+			err=argCheck(root,1);
+			IF_NOT_OK_RET(err);
+			elem *e1;
+			poly *p;
+			int pFree=1;
+			err=argTypeCheck(root,1,UNSET,ELEM);
+			if(err!=OK&&err!=ARGTYPEERR)
+				return err;
+			if(err==OK)
+				{
+					e1=findElem(ehead,root->right->left->elem);
+					if(e1==NULL)
+						return ELEMNOTFOUND;
+					if(e1->type!=POLY)
+						return ELEMTYPEERR;
+					if(e1->type==POLY)
+						{
+							p=clonePoly(e1->head);
+							if(p==NULL)
+								return OF;
+						}
+				}
+			else if(argTypeCheck(root,1,POLY,ELEM)==OK)
+				{
+					pFree=1;
+					p=strToPoly(root->right->left->elem);
+					IF_NULL_RET_OF(p);
+				}
+			else
+				return ARGTYPEERR;
+
+			dPoly(p);
+			
+			//printf("x:%i\n",x);
+			//foreachPoly(p,printPoly);
+			//foreachPoly(tmp,printPoly);
+			//printf("\n");
+			if(p==NULL)
+				{
+					if(pFree)
+						freePoly(p);
+					return OF;
+				}
+			char *strRet=polyToStr(p);
+			if(strRet==NULL)
+				{
+					if(pFree)
+						freePoly(p);
+					return OF;
+				}
+			err=setTree(root,strRet,POLY,ELEM);
+			if(pFree)
+				freePoly(p);
+			free(strRet);
+			IF_NOT_OK_RET(err);
+			return OK;
+		}
+	IFFUNC(root,clear)
+		{
+			if(argNum(root)!=0)
+				return ARGNUMERR;
+			system("clear");
+			err=setTree(root,"TRUE",BOOL,ELEM);
+			IF_NOT_OK_RET(err);
+			return OK;
+			
+		}	
 	//not a basic func
 	func *f=findFunc(fhead,root->left->elem);
 	if(f==NULL)
@@ -1767,7 +2440,6 @@ int eval(tree *root,func *fhead,elem *ehead)
 	IF_NOT_OK_RET(err);
 	err=mirrorSetup(mirror,f,root);
 	IF_NOT_OK_RET(err);
-	printf("mirror setup\n");
 	err=eval(mirror,fhead,ehead);
 	IF_NOT_OK_RET(err);
 	return OK;
@@ -1782,12 +2454,14 @@ int loadFile(char *path,func *fhead,elem *ehead)
 		}
 	while(!feof(fp))
 		{
-			fgets(line,STR_SIZE,fp);
+			char line[512];
+			fgets(line,512,fp);
+			printf("\e[1;33mline:%s\e[0m",line);
 			if(gramCheck(line)!=OK)
 				{
 					continue;
 				}
-			
+			printf("");
 			tree *root=treeInit();			
 
 
@@ -1795,13 +2469,15 @@ int loadFile(char *path,func *fhead,elem *ehead)
 				{
 					continue;
 				}
+
 			int err=eval(root,fhead,ehead);
-			//printf("%s\n",statToStr(err));
-			//printf("\n");
+			//printf("\n\n%s\n\n",statToStr(err));
 			if(err==EXIT)
 				return 0;
 			freeTree(root);
 		}
+
+
 	fclose(fp);
 	return OK;
 }
@@ -1810,14 +2486,16 @@ int main()
 {
 	func *fhead=funcInit();
 	elem *ehead=elemInit();
-	//	loadFile("./init.ml",fhead,ehead);
+	loadFile("./init.ml",fhead,ehead);
 	while(TRUE)
 		{
+			printf("\n");
 			char *line=readline("mkq> ");
 			printf("\n");
+			add_history(line);
 			if(gramCheck(line)!=OK)
 				{
-					ERROR("gramCheck not ok!\n");
+					printf("\e[1;31mgramCheck not ok!\e[0m\n");
 					free(line);
 					continue;
 				}
@@ -1827,14 +2505,13 @@ int main()
 
 			if(plantTree(root,line,ehead)!=OK)
 				{
-					ERROR("plant not OK\n");
+					printf("plant not OK\n");
 					free(line);
 					continue;
 				}
 
 			int err=eval(root,fhead,ehead);
-			printf("%s\n",statToStr(err));
-			printf("\n");
+			printf("\n\n\e[1;31m%s\e[0m\n\n",statToStr(err));
 			if(err==EXIT)
 				return 0;
 			freeTree(root);

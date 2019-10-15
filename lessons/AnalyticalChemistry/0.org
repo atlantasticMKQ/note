@@ -1,6 +1,9 @@
 #+TITLE: Analytical Chemistry 00
 #+AUTHOR: MKQ
 #+KEYWORDS: analytical-chemistry note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+
 * 上课
 ** 课程信息 :COURSE_STATUS:
 *** 名称
@@ -21,3 +24,27 @@
 - 定量分析
 - 结构分析
 
+
+* 滴定可行性分析
+** 要求剩余底物小于千分之一
+\[
+K=\frac{[A^-]}{[HA][OH^-]}>=\frac{0.999c^{sp}}{0.001c^{sp} 0.001c^{sp}}=\frac{10^6}{c^{sp}}=\frac{K_a}{K_w}
+\]
+- K_a c^{sp}>10^{-8}可以准确滴定(弱酸)
+如果不能满足
+- 改变测量终点的方法:电位滴定,光度滴定
+- 改变溶剂:苯酚在乙二胺
+- 利用化学反应:硼酸加入甘露醇/甘油
+** 强碱滴弱酸
+突跃区间的变化,一般来说用酚酞
+** 多元酸可以分布滴定的条件
+- 被滴定的酸足够强c^{sp}K_a1 >10^{-8} 
+- \Delta lgK_a足够大,如果E_t=\pm 0.1% 那么要\Delta lgK_a =6
+** 多元酸一步滴完的条件
+- cK_{an}>10^{-8}
+* 计算酸碱滴定的误差
+** 滴定一元弱酸碱
+\[
+TE%=\frac{\Delta [OH^-]}{e_{HB}^{ep}} 100%
+\]
+** 混合酸的滴定

@@ -1,4 +1,4 @@
-#define NAME_SIZE 64
+#define NAME_SIZE 512
 #define FUNC_NAME_SIZE NAME_SIZE
 #define STR_SIZE NAME_SIZE		
 char *readLen(char *ptr,int num)

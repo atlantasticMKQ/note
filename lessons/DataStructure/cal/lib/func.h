@@ -126,9 +126,9 @@ int addFunc(func *head,int retType,char *name,int argNum,arg *argHead,tree *eval
 }
 int printFunc(func *thisFunc)
 {
-	printf("(%s) %s(",typeToStr(thisFunc->retType),thisFunc->name);
+	printf(" \e[1;34m%s\e[0m ",thisFunc->name);
 	foreachArg(thisFunc->args,printArg);
-	printf(")");
+	printf("");
 	
 	if(thisFunc->eval==NULL)
 		printf("(inside)\n");

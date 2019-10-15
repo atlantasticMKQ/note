@@ -1,1 +1,3 @@
-(multi (let i 0) (for (not (equ i 10)) (multi (if (equ (mod i 2) 1) (multi (print i) (br)) (br)) (let i (add i 1)))))
+(def ssPoly (arg POLY p FLOAT a FLOAT b) (multi (let ps (sPoly p)) (let aa (calPoly ps a)) (let bb (calPoly ps b)) (print (sub bb aa)) (br) (delElem ps) (delElem aa) (delElem bb)))
+(def printToZero (arg INT a) (multi (let tmp a) (for (bigger tmp 0) (multi (print tmp) (br) (let tmp (sub tmp 1)))) (delElem tmp)))
+#end
