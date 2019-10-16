@@ -1,0 +1,273 @@
+% Created 2019-10-16 三 11:17
+% Intended LaTeX compiler: xelatex
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{Physical Chemistry09}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={Physical Chemistry09},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{热力学第二定律}
+\label{sec:org6f93632}
+自发变化
+\section{不可逆过程中熵变的计算}
+\label{sec:orgcbcff34}
+不可逆过程在P-V图中用虚线将始态终态连接起来,但这并不代表真实的过程
+然后可以把它划分为若干可逆的过程,由此来计算熵变
+(绝热可逆的熵变为0)
+(焓没有明确的定义)
+\[
+\Delta S=\int_{T_1}^{T_2} \frac{C_V}{T} dT
+\]
+对于等容过程
+\subsection{热传导的熵变计算}
+\label{sec:org8644039}
+有宏观温度差的热传导是熵增不可逆自发过程
+\subsection{气体混合熵变计算}
+\label{sec:orgde8841b}
+假设各种气体都膨胀到那个体积和分压,算熵变
+\subsection{相变过程的计算}
+\label{sec:org219c51e}
+\subsubsection{可逆的相变过程}
+\label{sec:org437e922}
+\[
+\Delta S=(\frac{Q}{T})_R =\frac{\Delta H}{T}
+\]
+\subsubsection{不可逆相变的计算}
+\label{sec:orga87f096}
+可逆相变的负值是环境的熵变
+在可逆相变的基础上设计一个循环
+\subsection{化学反应过程的熵变}
+\label{sec:orgcec9904}
+通过设计可逆的电池反应,用标准电动势来计算
+\[
+\Delta_r H_m^0 =\Delta_r G_m^0 + T\Delta S_m^0
+\]
+\(\Delta\) G是能做的最大的有用功
+\subsection{能量退降}
+\label{sec:org7448059}
+做功能力下降品质降低
+
+\subsection{热源见的热传导}
+\label{sec:org038a228}
+由于是热源温度不会变化,熵变大了
+\section{熵的统计意义}
+\label{sec:orgd3370f2}
+\[
+S=k log\Omega
+\]
+\subsection{熵随着温度的升高必然会增大}
+\label{sec:org641cdcd}
+气体熵主要贡献者是平动,液体是转动,固体振动+电子
+\[
+(\frac{\partial S}{\partial T})_p =\frac{C_p}{T} >0
+\]
+\[
+(\frac{\partial S}{\partial T})_V =\frac{C_V}{T} >0
+\]
+\subsection{Gibbs 自由能}
+\label{sec:orgada58ab}
+\[
+dU=\delta Q+\delta W 
+\]
+\[
+dS-\frac{\delta Q}{T} >=0
+\]
+
+于是就得到了
+$\backslash$[
+
+$\backslash$]
+\subsection{Helmholtz自由能}
+\label{sec:orgb35ff51}
+\[
+A=U-TS
+\]
+等温过程中,一个封闭体系对外做的最大的功
+在不断地减小
+\section{Gibbs自由能}
+\label{sec:orgd946b8f}
+\begin{itemize}
+\item 等温等压条件下
+\end{itemize}
+表示能做的最大的非体积功
+\[
+-\delta W_f <= -d(U+pV-TS) \mbox{或} -\delta W_f <= -d(H-TS)
+\]
+它做的功不大于G的减少 同时外界对它做的功不小于G的增加
+
+\section{亥姆霍兹自由能}
+\label{sec:orge294641}
+\begin{itemize}
+\item 等温条件下
+\end{itemize}
+描述的是不做体积功的情况
+\[
+A=U-TS
+\]
+\section{把反应设计为一个电化学反应来做非体积功}
+\label{sec:org2d9285a}
+\[
+\Delta G=-nEF
+\]
+\subsection{各种判据}
+\label{sec:org252883c}
+\begin{itemize}
+\item 熵
+\end{itemize}
+\begin{center}
+\begin{tabular}{ll}
+熵判据 & \\
+封闭系统 & 熵变大于等于热温商之和\\
+封闭/绝热系统 & \\
+隔离系统 & 熵永远增加\\
+ & \\
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item Gibbs自由能
+\end{itemize}
+\begin{center}
+\begin{tabular}{lllll}
+封闭等温等压有非体积功 & -dG=-dW\(_{\text{f}}\) & 可逆 & 如果大于是不可逆的,小于是不可能的 & \\
+\hline
+上面那个没体积功 & dG=0 & 可逆 & 同上 & \\
+\hline
+ &  &  &  & \\
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item 亥姆霍兹自由能
+\end{itemize}
+\begin{center}
+\begin{tabular}{lllll}
+ &  &  &  & \\
+\hline
+ &  &  &  & \\
+\end{tabular}
+\end{center}
+\subsection{\(\Delta\) G和\(\Delta\) A的计算}
+\label{sec:org4f258da}
+\subsection{\(\Delta\) G的计算}
+\label{sec:org8c524c9}
+\begin{itemize}
+\item 定义式
+\item 等温可逆非体积功
+\item vant Hoff平衡箱
+\item 
+\end{itemize}
+\[
+\Delta_r G_m^0 =-RTlnK^0
+\]
+\section{vant Hoff平衡箱}
+\label{sec:orga9e6f9e}
+\begin{itemize}
+\item reaction below
+\end{itemize}
+\[
+dD(g,p_D)+eE(g,p_E)==== fF(g,p_F)+gG(g,p_G)
+\]
+给定条件下未必可逆要设想可逆过程
+\begin{itemize}
+\item 设想一平衡箱
+
+\item 先DE等温可逆变压变成终态压力
+\item 注入DE缓慢抽出FG
+\item FG变成给定压力
+\end{itemize}
+
+\[
+\Delta_r G_m =-RTlnK^0 +RTlnQ
+\]
+\section{几个热力学函数间的关系}
+\label{sec:org663a64d}
+\subsection{基本关系式}
+\label{sec:orgaf565d2}
+\begin{itemize}
+\item H=U+PV
+\item A=U-TS
+\item G=H-TS
+\end{itemize}
+\subsection{微分关系式}
+\label{sec:org2166e46}
+\[
+dU=\delta Q+\delta W
+\]
+
+\[
+dS=\frac{Q_{rev}}{T}
+\]
+\[
+dU=TdS-pdV U=U(S,V)
+\]
+\[
+dH=dU+d(pV)=dU+pdV+Vdp
+\]
+\[
+dH=TdS+Vdp H=H(S,p)
+\]
+\[
+dA=dU-d(TS)=dU-TdS-SdT
+\]
+\[
+dA=-pdV-SdT A=A(V,T)
+\]
+\[
+dG=dH-d(TS)=Vdp-SdT G=G(p,T)
+\]
+\subsection{偏导数关系式}
+\label{sec:orgc7bcb1b}
+\[
+U=U(S,V)
+\]
+由此推得
+\[
+dU=(\frac{\partial U}{\partial S})_V dS+(\frac{\partial U}{\partial V})_S dV
+\]
+和上面的对比一下
+\[
+T=(\frac{\partial U}{\partial S})_V dS
+\]
+\[
+p=(\frac{\partial U}{\partial V})_S dV
+\]
+\begin{itemize}
+\item 其余的就这么推
+\end{itemize}
+\subsection{偏导数和偏导数的关系}
+\label{sec:orgcde84c5}
+函数z=f(x,y)在D存在且处处连续,则
+\[
+\frac{\partial^2 z}{\partial x \partial y}=\frac{\partial^2 z}{\partial y \partial x}
+\]
+由于
+\[
+(\frac{\partial U}{\partial S})_V =T
+\]
+那么
+\[
+(\frac{\partial T}{\partial V})_V=\frac{\partial^2 U}{\partial S \partial V}=\frac{\partial^2 U}{\partial V
+ \partial S}
+\]
+\end{document}

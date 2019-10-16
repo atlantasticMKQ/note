@@ -67,3 +67,132 @@ A=U-TS
 \]
 等温过程中,一个封闭体系对外做的最大的功
 在不断地减小
+* Gibbs自由能
+- 等温等压条件下
+表示能做的最大的非体积功
+\[
+-\delta W_f <= -d(U+pV-TS) \mbox{或} -\delta W_f <= -d(H-TS)
+\]
+它做的功不大于G的减少 同时外界对它做的功不小于G的增加
+
+* 亥姆霍兹自由能
+- 等温条件下
+描述的是不做体积功的情况
+\[
+A=U-TS
+\]
+* 把反应设计为一个电化学反应来做非体积功
+\[
+\Delta G=-nEF
+\]
+** 各种判据
+- 熵
+| 熵判据        |                        |
+| 封闭系统      | 熵变大于等于热温商之和 |
+| 封闭/绝热系统 |                        |
+| 隔离系统      | 熵永远增加             |
+|               |                        |
+- Gibbs自由能
+| 封闭等温等压有非体积功 | -dG=-dW_f | 可逆 | 如果大于是不可逆的,小于是不可能的 |   |
+|------------------------+-----------+------+-----------------------------------+---|
+| 上面那个没体积功       | dG=0      | 可逆 | 同上                              |   |
+|------------------------+-----------+------+-----------------------------------+---|
+|                        |           |      |                                   |   |
+- 亥姆霍兹自由能
+|   |   |   |   |   |
+|---+---+---+---+---|
+|   |   |   |   |   |
+** \Delta G和\Delta A的计算 
+** \Delta G的计算
+- 定义式
+- 等温可逆非体积功
+- vant Hoff平衡箱
+- 
+\[
+\Delta_r G_m^0 =-RTlnK^0
+\]
+* vant Hoff平衡箱
+- reaction below 
+\[
+dD(g,p_D)+eE(g,p_E)==== fF(g,p_F)+gG(g,p_G)
+\]
+给定条件下未必可逆要设想可逆过程
+- 设想一平衡箱
+
+1. 先DE等温可逆变压变成终态压力
+2. 注入DE缓慢抽出FG
+3. FG变成给定压力
+
+\[
+\Delta_r G_m =-RTlnK^0 +RTlnQ
+\]
+* 几个热力学函数间的关系
+** 基本关系式
+- H=U+PV
+- A=U-TS
+- G=H-TS
+** 微分关系式
+\[
+dU=\delta Q+\delta W
+\]
+
+\[
+dS=\frac{Q_{rev}}{T}
+\]
+\[
+dU=TdS-pdV U=U(S,V)
+\]
+\[
+dH=dU+d(pV)=dU+pdV+Vdp
+\]
+\[
+dH=TdS+Vdp H=H(S,p)
+\]
+\[
+dA=dU-d(TS)=dU-TdS-SdT
+\]
+\[
+dA=-pdV-SdT A=A(V,T)
+\]
+\[
+dG=dH-d(TS)=Vdp-SdT G=G(p,T)
+\]
+** 偏导数关系式 
+\[
+U=U(S,V)
+\]
+由此推得
+\[
+dU=(\frac{\partial U}{\partial S})_V dS+(\frac{\partial U}{\partial V})_S dV
+\]
+和上面的对比一下
+\[
+T=(\frac{\partial U}{\partial S})_V dS
+\]
+\[
+p=(\frac{\partial U}{\partial V})_S dV
+\]
+- 其余的就这么推
+** 偏导数和偏导数的关系
+函数z=f(x,y)在D存在且处处连续,则
+\[
+\frac{\partial^2 z}{\partial x \partial y}=\frac{\partial^2 z}{\partial y \partial x}
+\]
+由于
+\[
+(\frac{\partial U}{\partial S})_V =T
+\]
+那么
+\[
+(\frac{\partial T}{\partial V})_V=\frac{\partial^2 U}{\partial S \partial V}=\frac{\partial^2 U}{\partial V
+ \partial S}
+\]
+* 特性函数和特征变量
+选择合适的独立变量,就可以从一个已知的热力学函数推导出全部的均匀系统的平衡性质
+- 例如
+
+
+\[
+dG=-SdT+Vdp
+\]
+G是特性函数,T,p是特征变量
