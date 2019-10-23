@@ -28,7 +28,7 @@ dZ=(\frac{\partial Z}{\partial T})_{p,n_1,n_2...}dT+....
 Z_b^' =(\frac{\partial Z}{\partial n_B})_{T,p,n_C (C\neq B)}
 \]
 \[
-dZ=\Sum^{k}_{B=1}Z_B^' dn_B
+dZ=\sum^{k}_{B=1}Z_B^' dn_B
 \]
 the addition of Z when add 1 mol B i the solution
 - Z can be G H U V ...
@@ -36,3 +36,18 @@ the addition of Z when add 1 mol B i the solution
 - partial molar quantity is strength propities
 
 if you add components proportionally Z' won't changed
+** Gibbs-Duhem 's Law
+\[
+\sum_{B=1}^{k}n_B dZ_B =0
+\]
+* chemical potential
+\[
+dU=(\frac{\partial U}{\partial S})_{V,n_B} dS + ...
+\]
+\[
+\mu_B=(\frac{\partial U}{\partial n_B})_{V,p,n_C} =(\frac{\partial H}{\partial n_B})_{S,p,n_C}=(\frac{\partial G}{\partial n_B})_{T,p,n_C}=(\frac{\partial A}{\partial n_B})_{TV,n_C}
+\]
+\[
+dG=-SdT+Vdp+\sum_{B=1}^{k}(\frac{\partial G}{\partial n_B})_{T,p,n_C (C\neq B)}d_B
+\]
+  
