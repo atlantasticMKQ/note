@@ -1,0 +1,25 @@
+#+TITLE: 
+#+AUTHOR: MKQ
+#+KEYWORDS: note
+#+LATEX_COMPILER: xelatex
+#+LATEX_HEADER:\usepackage[scheme=plain]{ctex}
+* Defination of bi tree
+The bi tree have a left son and a righ son (which can be null)
+
+a method fit bi tree node will fit its sons
+
+** balanced bi tree
+the hight of a node's two sonless than 1
+** ideal balanced bi tree
+** full bi tree
+** complete bi tree
+it's easy to save a complete bi tree in a array, but for a random tree you must full it with empty node which will take up disk sapce.
+and there is also a LNode save space unalloced
+
+so we write it by LNode you can save three pointer in it point to parents and sons.
+** foreach bi tree
+first foreach right left sons
+and do for root node 
+
+* save and design method for a tree(not a bi tree)
+
