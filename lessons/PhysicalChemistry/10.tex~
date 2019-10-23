@@ -1,0 +1,76 @@
+% Created 2019-10-23 Wed 10:33
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[scheme=plain]{ctex}
+\author{MKQ}
+\date{\today}
+\title{multi-component-system}
+\hypersetup{
+ pdfauthor={MKQ},
+ pdftitle={multi-component-system},
+ pdfkeywords={note},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 8.3.3)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Perface}
+\label{sec:orgheadline2}
+In this chapter we discuss homogeneous-system
+\begin{itemize}
+\item mixture
+\item solution
+\item dilute solution
+\end{itemize}
+\subsection{solution}
+\label{sec:orgheadline1}
+\begin{itemize}
+\item solvent
+\item solute
+\end{itemize}
+\section{partial molar quantity}
+\label{sec:orgheadline4}
+not all capacity natures are addtive, water and EtOH for example
+\[
+V_{mix}\neq V_{H_{2}O}+V_{EtOH}
+\]
+except the mess
+\subsection{capacity nature Z}
+\label{sec:orgheadline3}
+\[
+Z=Z(T,p,n_1,n_2,...))
+\]
+\[
+dZ=(\frac{\partial Z}{\partial T})_{p,n_1,n_2...}dT+....
+\]
+\[
+Z_b^' =(\frac{\partial Z}{\partial n_B})_{T,p,n_C (C\neq B)}
+\]
+\[
+dZ=\Sum^{k}_{B=1}Z_B^' dn_B
+\]
+the addition of Z when add 1 mol B i the solution
+\begin{itemize}
+\item Z can be G H U V \ldots{}
+\item while Z=G it is chemical potetial
+\item partial molar quantity is strength propities
+\end{itemize}
+
+if you add components proportionally Z' won't changed
+\end{document}
