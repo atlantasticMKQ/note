@@ -4,6 +4,7 @@
 #include<string.h>
 #include<editline.h>
 
+#include"lib/defines.h"
 #include"lib/tools.h"
 #include"lib/bool.h"
 #include"lib/double.h"
@@ -11,7 +12,7 @@
 #include"lib/types.h"
 #include"lib/str.h"
 #include"lib/file.h"
-#include"lib/poly.h"
+
 
 #include"lib/elem.h"
 #include"lib/treeBasic.h"
@@ -22,24 +23,33 @@
 	
 		
 
-
+//this method is design to call self-defined funcs
+//via copy eval tree from func table and replace args with the real args
+//mirror is the eval tree copied 
 int mirrorSetup(tree *mirror,struct funcNode *f,tree *root)
 {
 	int err;
 	tree *newMirror;
+	//以newMirror为临时变量遍历mirror的参数
 	for(newMirror=mirror->right;newMirror!=NULL;newMirror=newMirror->right)
 		{
+			//mirror的参数:newMirror->left
+			//如果发现需要求值的其他参数,就把它setup
 			if(newMirror->left->type==UNSET&&newMirror->left->state==EVAL)
 				mirrorSetup(newMirror->left,f,root);
+			//如果是元素的话,就把它替换掉
 			if(newMirror->left->state==ELEM)
 				{
+					//遍历参数表,寻找和出现元素名称相同的参数的位置
 					for(struct argNode *a=f->args->next;a!=NULL;a=a->next)
 						{
 							if(strcmp(a->name,newMirror->left->elem)==0)
 								{
+									//node->left最后会指向那个位置的实参
 									tree *node=root;
 									for(int i=0;i<a->index;node=node->right)
 										i++;
+									//把mirror的参数设置成了实参的样子
 									err=setTree(newMirror->left,node->left->elem,node->left->type,node->left->state);
 									IF_NOT_OK_RET(err);
 								}
@@ -48,383 +58,419 @@ int mirrorSetup(tree *mirror,struct funcNode *f,tree *root)
 		}
 	return OK;
 }
+//(defIn foo (arg INT mkq INT a INT b ...))
+int defIn(tree *root,func *fhead,elem *ehead)
+{
+	int err=OK;
+	err=argCheck(root,2);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,1,UNSET,ELEM);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,2,UNSET,EVAL);
+	IF_NOT_OK_RET(err);
+			
+	tree *arg=ARG_2(root);
+	IF_NEQ(ARG_0(arg)->elem,arg)
+		return FUNCNAMEERR;
 
+	arg *argHead=argInit();
+	IF_NULL_RET_OF(argHead);
+	//save if this arg is type or elem
+	int type=TRUE;
+	for(tree *tmp=arg->right;tmp!=NULL;tmp=tmp->right)
+		{
+			if(type==TRUE)
+				{
+					err=argTypeCheck(tmp,0,UNSET,ELEM);
+					IF_NOT_OK_DO_RET(err,freeArg(argHead));
+							
+					err=argTypeCheck(tmp,1,UNSET,ELEM);
+					IF_NOT_OK_DO_RET(err,freeArg(argHead));
+							
+					err=addArg(argHead,strToType(ARG_0(tmp)->elem),ARG_1(tmp)->elem);
+					IF_NOT_OK_DO_RET(err,freeArg(argHead));
+					type=FALSE;
+				}
+			else
+				type=TRUE;
+		}
+	err=addFunc(fhead,ARG_1(root)->elem,0,argHead,NULL);
+	IF_NOT_OK_DO_RET(err,freeArg(argHead));
+
+	err=setTree(root,"TRUE",BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+}
+int def(tree *root,func *fhead,elem *ehead)
+{
+	int err=OK;
+	err=argCheck(root,3);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,1,UNSET,ELEM);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,2,UNSET,EVAL);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,3,UNSET,EVAL);
+	IF_NOT_OK_RET(err);
+			
+	tree *arg=ARG_2(root);
+	IF_NEQ(ARG_0(arg)->elem,arg)
+		return FUNCNAMEERR;
+	arg *argHead=argInit();
+	IF_NULL_RET_OF(argHead);
+
+	int type=TRUE;
+	for(tree *tmp=arg->right;tmp!=NULL;tmp=tmp->right)
+		{
+			if(type==TRUE)
+				{
+					err=argTypeCheck(tmp,0,UNSET,ELEM);
+					IF_NOT_OK_DO_RET(err,freeArg(argHead));
+							
+					err=argTypeCheck(tmp,1,UNSET,ELEM);
+					IF_NOT_OK_DO_RET(err,freeArg(argHead));
+							
+					err=addArg(argHead,strToType(ARG_0(tmp)->elem),ARG_1(tmp)->elem);
+					IF_NOT_OK_DO_RET(err,freeArg(argHead));
+							
+					type=FALSE;
+				}
+			else
+				type=TRUE;
+		}
+	tree *eval;
+	err=copyTree(ARG_3(root),&eval);
+	IF_NOT_OK_DO_RET(err,freeArg(argHead));
+			
+	err=addFunc(fhead,ARG_1(root)->elem,getArgNum(argHead),argHead,eval);
+	IF_NOT_OK_DO_RET(err,freeArg(argHead));
+
+	err=setTree(root,"TRUE",BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+}
+int help(tree *root)
+{
+	int err=OK;
+	err=argCheck(root,1);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,1,UNSET,ELEM);
+	IF_NOT_OK_RET(err);
+			
+	char *path;			
+	path=copyStr(HELP_DIR);
+	IF_NULL_RET_OF(path);
+			
+	strcat(path,ARG_1(root)->elem);
+	err=printFile(path);
+	if(err!=NOSUCHFILE)
+		IF_NOT_OK_RET(err);
+
+	char *elem;
+	if(err!=OK)
+		elem="FALSE";
+	else
+		elem="TRUE";
+	err=setTree(root,elem,BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	free(path);
+	return OK;
+}
+int listFunc(tree *root,func *fhead)
+{
+	int err=OK;
+	err=argCheck(root,0);
+	IF_NOT_OK_RET(err);
+	foreachFunc(fhead,printFunc);
+	err=setTree(root,"TRUE",BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+}
+int listElem(tree *root,elem *ehead)
+{
+	int err=OK;
+	err=argCheck(root,0);
+	IF_NOT_OK_RET(err);
+	foreachElem(ehead,printElem);
+	err=setTree(root,"TRUE",BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+}
+int eval(tree *root,func *fhead,elem *ehead);
+int loop(tree *root,func *fhead,elem *ehead)
+{
+	int err=OK;
+	err=argCheck(root,2);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,2,UNSET,EVAL);
+	IF_NOT_OK_RET(err);
+
+	tree *evalBack,*tmp;
+	//把右半边树全部复制到evalBack
+	err=copyTree(root->right,&evalBack);
+	IF_NOT_OK_RET(err);
+	while(TRUE)
+		{
+			freeTree(root->right);
+			err=copyTree(evalBack,&tmp);
+			root->right=tmp;
+			IF_NOT_OK_DO_RET(err,freeTree(evalBack));
+			//eval arg 1
+			if(argTypeCheck(root,1,UNSET,EVAL)==OK)
+				err=eval(ARG_1(root),fhead,ehead);
+			IF_NOT_OK_RET(err);
+					
+			if(argTypeCheck(root,1,BOOL,ELEM)==OK)
+				{
+					IF_EQ(ARG_1(root)->elem,TRUE)
+						{
+							err=eval(ARG_2(root),fhead,ehead);
+							IF_NOT_OK_DO_RET(err,freeTree(evalBack));
+							continue;
+						}
+					else
+						break;
+				}
+			else if(argTypeCheck(root,1,UNSET,ELEM)==OK)
+				{
+					elem *e=findElem(ehead,ARG_1(root)->elem);
+					if(e==NULL)
+						{
+							freeTree(evalBack);
+							return ELEMNOTFOUND;
+						}
+					if(e->type!=BOOL)
+						{
+							freeTree(evalBack);
+							return ARGTYPEERR;
+						}
+					if(e->bool==TRUE)
+						{
+							err=eval(ARG_2(root),fhead,ehead);
+							IF_NOT_OK_DO_RET(err,freeTree(evalBack));
+							continue;
+						}
+					else
+						break;
+				}
+			else
+				return ARGTYPEERR;
+		}
+	freeTree(evalBack);
+	err=setTree(root,"TRUE",BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+}
+int judge(tree *root,func *fhead,elem *ehead)
+{
+	int err=OK;
+	err=argCheck(root,3);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,2,UNSET,EVAL);
+	IF_NOT_OK_RET(err);
+	err=argTypeCheck(root,3,UNSET,EVAL);
+	IF_NOT_OK_RET(err);
+			
+	if(argTypeCheck(root,1,UNSET,EVAL)==OK)
+		err=eval(ARG_1(root),fhead,ehead);
+	IF_NOT_OK_RET(err);
+	//返回值为最后执行语句的返回值
+	if(argTypeCheck(root,1,BOOL,ELEM)==OK)
+		{
+			IF_EQ(ARG_1(root)->elem,TRUE)
+				{
+					err=eval(ARG_2(root),fhead,ehead);
+					IF_NOT_OK_RET(err);
+							
+					err=setTree(root,ARG_2(root)->elem,ARG_2(root)->type,ARG_2(root)->state);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else
+				{
+					err=eval(ARG_3(root),fhead,ehead);
+					IF_NOT_OK_RET(err);
+							
+					err=setTree(root,ARG_3(root)->elem,ARG_3(root)->type,ARG_3(root)->state);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+		}
+	if(argTypeCheck(root,1,UNSET,ELEM)==OK)
+		{
+			elem *e=findElem(ehead,ARG_1(root)->elem);
+			if(e==NULL)
+				return ELEMNOTFOUND;
+			if(e->type!=BOOL)
+				return ARGTYPEERR;
+			if(e->bool==TRUE)
+				{
+					err=eval(ARG_2(root),fhead,ehead);
+					IF_NOT_OK_RET(err);
+							
+					err=setTree(root,ARG_2(root)->elem,ARG_2(root)->type,ARG_2(root)->state);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+			else
+				{
+					err=eval(ARG_3(root),fhead,ehead);
+					IF_NOT_OK_RET(err);
+					err=setTree(root,ARG_3(root)->elem,ARG_3(root)->type,ARG_3(root)->state);
+					IF_NOT_OK_RET(err);
+					return OK;
+				}
+		}
+	else
+		return ARGTYPEERR;
+	err=setTree(root,"TRUE",BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+}
+int print(tree *root,elem *ehead)
+{
+	int err=OK;
+	int aNum=argNum(root);
+	tree *tmp=root->right;
+	for(int i=0;i<aNum;i++)
+		{
+			if(argTypeCheck(root,i+1,UNSET,ELEM)==OK)
+				{
+					elem *e=findElem(ehead,tmp->left->elem);
+					if(e==NULL)
+						printf(PRINT_NULL_ELEM);
+					else
+						{
+							switch(e->type)
+								{
+								case INT:
+									printf(PRINT_INT_ELEM,e->num);
+									break;
+								case FLOAT:
+									printf(PRINT_FLOAT_ELEM,e->val);
+									break;
+								case BOOL:
+									printf(PRINT_BOOL_ELEM,boolToStr(e->bool));
+									break;
+								case STR:
+									printf(PRINT_STR_ELEM,e->str);
+									break;
+								}
+						}
+				}
+			else 
+				printf("%s",tmp->left->elem);
+			tmp=tmp->right;
+		}
+	err=setTree(root,"TRUE",BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+
+}
+int br(tree *root)
+{
+	int err=OK;
+	err=argCheck(root,0);
+	IF_NOT_OK_RET(err);
+	printf("\n");
+	err=setTree(root,"TRUE",BOOL,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+}
+int multi(tree *root)
+{
+	int err=OK;
+	int aNum=argNum(root);
+	if(aNum==0)
+		return ARGNUMERR;
+	tree *ret=root;
+	for(int i=0;i<aNum;i++)
+		ret=ret->right;
+	ret=ret->left;
+			
+	err=setTree(root,ret->elem,ret->type,ELEM);
+	IF_NOT_OK_RET(err);
+	return OK;
+}
 int eval(tree *root,func *fhead,elem *ehead)
 {
 	int err=OK;
 
 	err=argTypeCheck(root,0,FUNC,FUNC);
-
 	IF_NOT_OK_RET(err);
 
+	//
+	//build-in funcs
+	//
+	
 	//(defIn foo (arg INT mkq INT a INT b ...))
 	IFFUNC(root,defIn)
-		{
-			err=argCheck(root,2);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,1,UNSET,ELEM);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,2,UNSET,EVAL);
-			IF_NOT_OK_RET(err);
-			
-			arg *argHead=argInit();
-			IF_NULL_RET_OF(argHead);
-			
-			tree *arg=root->right->right->left;
-			if(strcmp(arg->left->elem,"arg")!=0)
-				{
-					free(argHead);
-					return FUNCNAMEERR;
-				}
+		err=defIn(root,fhead,ehead);
+	IF_NOT_OK_RET(err);
 
-			int type=TRUE;
-			for(tree *tmp=arg->right;tmp!=NULL;tmp=tmp->right)
-				{
-					if(type==TRUE)
-						{
-							err=argTypeCheck(tmp,0,UNSET,ELEM);
-							IF_NOT_OK_DO_RET(err,freeArg(argHead));
-							
-							err=argTypeCheck(tmp,1,UNSET,ELEM);
-							IF_NOT_OK_DO_RET(err,freeArg(argHead));
-							
-							err=addArg(argHead,strToType(tmp->left->elem),tmp->right->left->elem);
-							IF_NOT_OK_DO_RET(err,freeArg(argHead));
-							type=FALSE;
-						}
-					else
-						type=TRUE;
-				}
-			err=addFunc(fhead,UNSET,root->right->left->elem,0,argHead,NULL);
-			IF_NOT_OK_DO_RET(err,freeArg(argHead));
-
-			err=setTree(root,"TRUE",BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
-	//(defIn foo (arg INT mkq INT a INT b ...) (add mkq (add a b)))
+	//(def foo (arg INT mkq INT a INT b ...) (add mkq (add a b)))
 	IFFUNC(root,def)
-		{
-			err=argCheck(root,3);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,1,UNSET,ELEM);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,2,UNSET,EVAL);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,3,UNSET,EVAL);
-			IF_NOT_OK_RET(err);
-			
-			
-			arg *argHead=argInit();
-			IF_NULL_RET_OF(argHead);
-			
-			tree *arg=root->right->right->left;
-			if(strcmp(arg->left->elem,"arg")!=0)
-				{
-					free(argHead);
-					return FUNCNAMEERR;
-				}
-
-			int type=TRUE;
-			for(tree *tmp=arg->right;tmp!=NULL;tmp=tmp->right)
-				{
-					if(type==TRUE)
-						{
-							err=argTypeCheck(tmp,0,UNSET,ELEM);
-							IF_NOT_OK_DO_RET(err,freeArg(argHead));
-							
-							err=argTypeCheck(tmp,1,UNSET,ELEM);
-							IF_NOT_OK_DO_RET(err,freeArg(argHead));
-							
-							err=addArg(argHead,strToType(tmp->left->elem),tmp->right->left->elem);
-							IF_NOT_OK_DO_RET(err,freeArg(argHead));
-							type=FALSE;
-						}
-					else
-						type=TRUE;
-				}
-			tree *eval;
-			err=copyTree(root->right->right->right->left,&eval);
-			IF_NOT_OK_DO_RET(err,freeArg(argHead));
-			struct argNode *argTail;
-			TOTAIL(argHead,argTail);
-			err=addFunc(fhead,UNSET,root->right->left->elem,argTail->index,argHead,eval);
-			IF_NOT_OK_DO_RET(err,freeArg(argHead));
-
-			err=setTree(root,"TRUE",BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
+		err=def(root,fhead,ehead);
+	IF_NOT_OK_RET(err);
 
 	//help (help index)
 	IFFUNC(root,help)
-		{
-			err=argCheck(root,1);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,1,UNSET,ELEM);
-			IF_NOT_OK_RET(err);		
-			char *path;			
-			path=copyStr("./help/");
-			IF_NULL_RET_OF(path);
-			
-			strcat(path,root->right->left->elem);
-
-			err=printFile(path);
-			if(err!=NOSUCHFILE)
-				IF_NOT_OK_RET(err);
-			char *elem;
-			if(err!=OK)
-				{
-					elem="FALSE";
-				}
-			else
-				{
-					elem="TRUE";
-				}
-			err=setTree(root,elem,BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			free(path);
-			return OK;
-
-		}
+		err=help(root);
+	IF_NOT_OK_RET(err);
+	
 	//(listFunc)
 	IFFUNC(root,listFunc)
-		{
-			err=argCheck(root,0);
-			IF_NOT_OK_RET(err);
-			foreachFunc(fhead,printFunc);
-			err=setTree(root,"TRUE",BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
+		err=listFunc(root,fhead);
+	IF_NOT_OK_RET(err);
+
+	//(listElem)
 	IFFUNC(root,listElem)
-		{
-			err=argCheck(root,0);
-			IF_NOT_OK_RET(err);
-			foreachElem(ehead,printElem);
-			err=setTree(root,"TRUE",BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
+		err=listElem(root,ehead);
+	IF_NOT_OK_RET(err);
 
+	//(quit)
 	IFFUNC(root,quit)
-		{
-			return EXIT;
-		}
-	IFFUNC(root,for)
-		{
-			err=argCheck(root,2);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,2,UNSET,EVAL);
-			IF_NOT_OK_RET(err);
-			tree *evalBack,*tmp;
-			err=copyTree(root->right,&evalBack);
-			IF_NOT_OK_RET(err);
-			while(TRUE)
-				{
-					freeTree(root->right);
-					err=copyTree(evalBack,&tmp);
-					root->right=tmp;
-					IF_NOT_OK_RET(err);
-					//eval arg 1
-					if(argTypeCheck(root,1,UNSET,EVAL)==OK)
-						{
-							err=eval(root->right->left,fhead,ehead);
-							IF_NOT_OK_RET(err);
-						}
-					if(argTypeCheck(root,1,BOOL,ELEM)==OK)
-						{
-							if(strcmp(root->right->left->elem,"TRUE")==0)
-								{
-									err=eval(root->right->right->left,fhead,ehead);
-									IF_NOT_OK_DO_RET(err,freeTree(evalBack));
-									continue;
-								}
-							else
-								break;
-						}
-					else if(argTypeCheck(root,1,UNSET,ELEM)==OK)
-						{
-							elem *e=findElem(ehead,root->right->left->elem);
-							if(e==NULL)
-								{
-									freeTree(evalBack);
-									return ELEMNOTFOUND;
-								}
-							if(e->type!=BOOL)
-								{
-									freeTree(evalBack);
-									return ARGTYPEERR;
-								}
-							if(e->bool==TRUE)
-								{
-									err=eval(root->right->right->left,fhead,ehead);
-									IF_NOT_OK_DO_RET(err,freeTree(evalBack));
-									continue;
-								}
-							else
-								break;
-						}
-					else
-						return ARGTYPEERR;
+		return EXIT;
 
-					
-				}
-			freeTree(evalBack);
-			err=setTree(root,"TRUE",BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
+	//(loop (true) (multi (print "Hello m-lisp") (br)))
+	IFFUNC(root,loop)
+		err=loop(root,fhead,ehead);
+	IF_NOT_OK_RET(err);
 
+	//(if (true) (multi (print "true") (br)) (multi (print "false") (br)))
 	IFFUNC(root,if)
-		{
-			err=argCheck(root,3);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,2,UNSET,EVAL);
-			IF_NOT_OK_RET(err);
-			err=argTypeCheck(root,3,UNSET,EVAL);
-			IF_NOT_OK_RET(err);
-			if(argTypeCheck(root,1,UNSET,EVAL)==OK)
-				{
-					err=eval(root->right->left,fhead,ehead);
-					IF_NOT_OK_RET(err);
-				}
-			if(argTypeCheck(root,1,BOOL,ELEM)==OK)
-				{
-					if(strcmp(root->right->left->elem,"TRUE")==0)
-						{
-							err=eval(root->right->right->left,fhead,ehead);
-							IF_NOT_OK_RET(err);
-							err=setTree(root,root->right->right->left->elem,root->right->right->left->type,root->right->right->left->state);
-							IF_NOT_OK_RET(err);
-							return OK;
-						}
-					else
-						{
-							err=eval(root->right->right->right->left,fhead,ehead);
-							IF_NOT_OK_RET(err);
-							err=setTree(root,root->right->right->right->left->elem,root->right->right->right->left->type,root->right->right->right->left->state);
-							IF_NOT_OK_RET(err);
-							return OK;
-						}
-				}
-			if(argTypeCheck(root,1,UNSET,ELEM)==OK)
-				{
-					elem *e=findElem(ehead,root->right->left->elem);
-					if(e==NULL)
-						return ELEMNOTFOUND;
-					if(e->type!=BOOL)
-						{
-							return ARGTYPEERR;
-						}
-					if(e->bool==TRUE)
-						{
-							err=eval(root->right->right->left,fhead,ehead);
-							IF_NOT_OK_RET(err);
-							err=setTree(root,root->right->right->left->elem,root->right->right->left->type,root->right->right->left->state);
-							IF_NOT_OK_RET(err);
-							return OK;
-						}
-					else
-						{
-							err=eval(root->right->right->right->left,fhead,ehead);
-							IF_NOT_OK_RET(err);
-							err=setTree(root,root->right->right->right->left->elem,root->right->right->right->left->type,root->right->right->right->left->state);
-							IF_NOT_OK_RET(err);
-							return OK;
-						}
-				}
-			else
-				return argTypeCheck(root,1,UNSET,ELEM);
-			err=setTree(root,"TRUE",BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
+		err=judge(root,fhead,ehead);
+	IF_NOT_OK_RET(err);
+	
 	//eval args
 	for(tree *tmp=root->right;tmp!=NULL;tmp=tmp->right)
 		{
-			if(tmp->left==NULL)
-				{
-					return ERR;
-				}
+			IF_NULL_RET(tmp->left,ERR)
 			if(tmp->left->state==EVAL)
 				{
 					err=eval(tmp->left,fhead,ehead);
-					if(err!=OK)
-						return err;
+					IF_NOT_OK_RET(err);
 				}
 			else if(tmp->left->state!=ELEM)
 				return ERR;
 		}
+
+	//(print elemName "is " "xxxx")
 	IFFUNC(root,print)
-		{
-			int aNum=argNum(root);
-			tree *tmp=root->right;
-			for(int i=0;i<aNum;i++)
-				{
-					if(argTypeCheck(root,i+1,UNSET,ELEM)==OK)
-						{
-							elem *e=findElem(ehead,tmp->left->elem);
-							if(e==NULL)
-								{
-									printf("(null)");
-								}
-							else
-								{
-									switch(e->type)
-										{
-										case INT:
-											printf("%i",e->num);
-											break;
-										case FLOAT:
-											printf("%.4f",e->val);
-											break;
-										case BOOL:
-											printf("%s",boolToStr(e->bool));
-											break;
-										case STR:
-											printf("%s",e->str);
-											break;
-										case POLY:
-											foreachPoly(e->head,printPoly);
-											break;
-										}
-								}
-						}
-					else 
-						{
-							printf("%s",tmp->left->elem);
-									
-						}
-					tmp=tmp->right;
-				}
-			err=setTree(root,"TRUE",BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
+		err=print(root,ehead);
+	IF_NOT_OK_RET(err);
+
+	//(br)
 	IFFUNC(root,br)
-		{
-			err=argCheck(root,0);
-			IF_NOT_OK_RET(err);
-			printf("\n");
-			err=setTree(root,"TRUE",BOOL,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
+		err=br(root);
+	IF_NOT_OK_RET(err);
+
+	//所以必须保证上面对参数求值是从左到右顺序的
+	//(multi (print "mkq") (br) (print "is") (br) (print "best"))
 	IFFUNC(root,multi)
-		{
-			int aNum=argNum(root);
-			if(aNum==0)
-				return ARGNUMERR;
-			tree *ret=root;
-			for(int i=0;i<aNum;i++)
-				ret=ret->right;
-			ret=ret->left;
-			
-			err=setTree(root,ret->elem,ret->type,ELEM);
-			IF_NOT_OK_RET(err);
-			return OK;
-		}
+		err=multi(root);
+	IF_NOT_OK_RET(err);
+	
 	IFFUNC(root,and)
 		{
 			int bool1,bool2;
@@ -2428,8 +2474,15 @@ int eval(tree *root,func *fhead,elem *ehead)
 			IF_NOT_OK_RET(err);
 			return OK;
 			
-		}	
+		}
+	IFFUNC(root,ret)
+		{
+			if(argNum(root)!=1)
+				return ARGNUMERR;
+			
+		}
 	//not a basic func
+	//find the func defined
 	func *f=findFunc(fhead,root->left->elem);
 	if(f==NULL)
 		return FUNCNAMEERR;

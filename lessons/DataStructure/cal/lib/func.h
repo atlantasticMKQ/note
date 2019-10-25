@@ -9,7 +9,6 @@ typedef struct argNode arg;
 
 struct funcNode
 {
-	int retType;
 	char *name;
 	int argNum;
 	tree *eval;
@@ -93,12 +92,17 @@ int foreachArg(arg *head,int (* method)(arg *thisArg))
 	}
 	return OK;
 }
+int getArgNum(arg *head)
+{
+	arg *tmp;
+	TOTAIL(head,tmp);
+	return tmp->index;
+}
 func *funcInit()
 {
 	func *head;
 	head=MALLOC(func);
 	IF_NULL_RET_NULL(head);
-	head->retType=FUNC;
 	head->name=NULL;
 	head->argNum=0;
 	head->next=NULL;
@@ -106,14 +110,13 @@ func *funcInit()
 	head->eval=NULL;
 	return head;
 }
-int addFunc(func *head,int retType,char *name,int argNum,arg *argHead,tree *eval)
+int addFunc(func *head,char *name,int argNum,arg *argHead,tree *eval)
 {
 	func *tail;
 	TOTAIL(head,tail);
 	tail->next=MALLOC(func);
        
 	IF_NULL_RET_OF(tail->next);
-	tail->next->retType=retType;
 	tail->next->name=MALLOC_NUM(char,FUNC_NAME_SIZE);
 	IF_NULL_DO_RET_OF(tail->next->name,do{free(tail->next);tail->next=NULL;}while(0));
 
@@ -180,7 +183,7 @@ func *cloneFunc(func *head)
 					freeArg(tmpA);
 					return NULL;
 				}
-			err=addFunc(clone,tmpF->retType,tmpF->name,tmpF->argNum,tmpA,eval);
+			err=addFunc(clone,tmpF->name,tmpF->argNum,tmpA,eval);
 			if(err!=OK)
 				{
 					freeFunc(clone);

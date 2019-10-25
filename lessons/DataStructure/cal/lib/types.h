@@ -4,8 +4,7 @@
 #define INT	1
 #define BOOL	2
 #define STR	3
-#define POLY	4
-#define FLOAT	5
+#define FLOAT	4
 char *typeToStr(int type)
 {
 	switch(type)
@@ -22,30 +21,26 @@ char *typeToStr(int type)
 			return "BOOL";
 		case STR:
 			return "STR";
-		case POLY:
-			return "POLY";
 		case FLOAT:
 			return "FLOAT";
 		default:
 			return "UNKNOWN";
 		}
 }
-#define IF_EQ(name) if(strcmp(str,#name)==0)
+
 int strToType(char *str)
 {
-	IF_EQ(UNSET)
+	IF_EQ(str,UNSET)
 		return UNSET;
-	IF_EQ(FUNC)
+	IF_EQ(str,FUNC)
 		return FUNC;
-	IF_EQ(INT)
+	IF_EQ(str,INT)
 		return INT;
-	IF_EQ(BOOL)
+	IF_EQ(str,BOOL)
 		return BOOL;
-	IF_EQ(POLY)
-		return POLY;
-	IF_EQ(STR)
+	IF_EQ(str,STR)
 		return STR;
-	IF_EQ(FLOAT)
+	IF_EQ(str,FLOAT)
 		return FLOAT;
 	return UNMATCH;
 }

@@ -4,9 +4,7 @@ struct elemNode
 	int num;
 	int bool;
 	char *str;
-	poly *head;
 	double val;
-
 	char *name;
 	struct elemNode *next;
 };
@@ -19,13 +17,12 @@ elem *elemInit()
 	head->num=0;
 	head->bool=FALSE;
 	head->str=NULL;
-	head->head=NULL;
 	head->val=0;
 	head->name=NULL;
 	head->next=NULL;
 	return head;
 }
-int addElem(elem *head,int type,int num,int bool,char *str,char *poly,double val,char *name)
+int addElem(elem *head,int type,int num,int bool,char *str,double val,char *name)
 {
 	elem *tail;
 	TOTAIL(head,tail);
@@ -37,7 +34,6 @@ int addElem(elem *head,int type,int num,int bool,char *str,char *poly,double val
 	tail->type=type;
 	tail->num=num;
 	tail->bool=bool;
-	//tail->str=str;
 	if(type==STR)
 		{
 			tail->str=MALLOC_NUM(char,STR_SIZE);
@@ -51,20 +47,7 @@ int addElem(elem *head,int type,int num,int bool,char *str,char *poly,double val
 		}
 	else
 		tail->str=NULL;
-	if(type==POLY)
-		{
-			tail->head=strToPoly(poly);
-			if(tail->head==NULL)
-				{
-					free(tail);
-					tailH->next=NULL;
-					return OF;
-				}
-		}
-	else
-		tail->head=NULL;
 	tail->val=val;
-	//tail->name=name;
 	tail->name=MALLOC_NUM(char,FUNC_NAME_SIZE);
 	if(tail->name==NULL)
 		{
@@ -95,8 +78,6 @@ int delElem(elem *ehead,elem *toDel)
 	if(tmp->next==NULL)
 		return ELEMNOTFOUND;
 	tmp->next=toDel->next;
-	if(toDel->type==POLY)
-		freePoly(toDel->head);
 	free(toDel->name);
 	free(toDel->str);
 	free(toDel);
@@ -108,8 +89,6 @@ int freeElem(elem *elemHead)
 	if(elemHead==NULL)
 		return OK;
 	freeElem(elemHead->next);
-	if(elemHead->type==POLY)
-		freePoly(elemHead->head);
 	free(elemHead->name);
 	free(elemHead->str);
 	free(elemHead);
@@ -122,19 +101,7 @@ elem *copyElem(elem *head)
 	int err;
 	for(elem *tmp=head;tmp->next!=NULL;tmp=tmp->next)
 		{
-			if(tmp->next->type==POLY)
-				{
-					char *tmpPoly=polyToStr(tmp->next->head);
-					if(tmpPoly==NULL)
-						{
-							freeElem(clone);
-							return NULL;
-						}
-					err=addElem(clone,tmp->next->type,tmp->next->num,tmp->next->bool,tmp->next->str,tmpPoly,tmp->next->val,tmp->next->name);
-					free(tmpPoly);
-				}
-			else
-					err=addElem(clone,tmp->next->type,tmp->next->num,tmp->next->bool,tmp->next->str,NULL,tmp->next->val,tmp->next->name);
+			err=addElem(clone,tmp->next->type,tmp->next->num,tmp->next->bool,tmp->next->str,tmp->next->val,tmp->next->name);
 			if(err!=OK)
 				{
 					freeElem(clone);
@@ -163,11 +130,6 @@ int printElem(elem *thisElem)
 			break;
 		case STR:
 			printf("%s:%s:STR\n",thisElem->name,thisElem->str);
-			break;
-		case POLY:
-			printf("%s:",thisElem->name);
-			foreachPoly(thisElem->head,printPoly);
-			printf(":POLY\n");
 			break;
 		default:
 			printf("unknown type val\n");
