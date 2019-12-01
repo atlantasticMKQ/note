@@ -51,3 +51,55 @@ dU=(\frac{\partial U}{\partial S})_{V,n_B} dS + ...
 dG=-SdT+Vdp+\sum_{B=1}^{k}(\frac{\partial G}{\partial n_B})_{T,p,n_C (C\neq B)}d_B
 \]
   
+
+* 气体混合物中各组分的化学势
+** 单组分理想气体
+\[
+\mu=\left(\frac{\partial G}{\partial n}\right)=G_{m}
+\]
+\[
+\mu(T,p)=\mu^{0}(T,p^{0})+RTln\left(\frac{p}^{0}}\right)
+\]
+** 对于多组分理想气体混合物
+情况几乎一样,只是压力换成了分压
+
+** 单组分的实际气体的化学势
+\[
+pV_{m}=RT\left(1+\frac{ap}{1+ap}\right)
+\]
+\[
+\left(\frac{\partial \mu}{\partial p}\right)_{T}=V_{m}=\frac{RT}{p}\left(1+\frac{ap}{1+ap}\right)
+\]
+\[
+\int d\mu=\int \frac{RT}{p}\left(1+\frac{ap}{1+ap}\right)dp
+\]
+\[
+\mu(T,p)=\mu^{0}(T,p^{0})+RTln\left(\frac{p}{p^{0}}\right)+RTln(1+\alpha p)
+\]
+
+令
+\[
+RTln(1+\alpha p)=RTln\gamma
+\]
+\[
+\mu(T,p)=\mu^{0}(T,p^{0})+RTln\left(\frac{p\gamma}{p^{0}}\right)
+\]
+令p\gamma=f
+\[
+\mu(T,p)=\mu^{0}(T,p^{0})+RTln\left(\frac{f}{p^{0}}\right)
+\]
+这样就和理想气体一致了
+
+- f:逸度,表示有效的压力,校正后的压力
+- 近似有$f_{B}=f_{B}^{*} x_{B}$ 其中$f_{B}^{*}$是同温度下纯B物质在压力为混合气体总压时的逸度
+- 当\gamma=1时,回到理想气体
+** 逸度的求值
+*** 状态方程法
+根据状态方程来计算
+对于纯气体
+\[
+\left(\frac{\partial \mu}{\partial p}\right)_{T}=V_{m}
+\]
+\[
+\int d\mu=\int \frac{RT}{p}\left(1+\frac{ap}{1+ap}\right)dp
+\]
